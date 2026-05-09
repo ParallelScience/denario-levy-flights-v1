@@ -1,0 +1,32 @@
+{
+    "sisyphus_strong_cooling": {
+        "gamma0": 5.0,
+        "sigma": 1.0,
+        "q_theoretical": 1.2,
+        "alpha_theoretical": 9.000000000000002,
+        "alpha_theoretical_capped": 2.0,
+        "q_empirical_pos": 1.0,
+        "alpha_empirical_tail": 6.2689077817772345,
+        "spatial_noise_cv": 0.028981966993111494
+    },
+    "sisyphus_moderate_cooling": {
+        "gamma0": 1.0,
+        "sigma": 1.0,
+        "q_theoretical": 2.0,
+        "alpha_theoretical": 1.0,
+        "alpha_theoretical_capped": 1.0,
+        "q_empirical_pos": 1.3665726817083155,
+        "alpha_empirical_tail": 1.5917248238923718,
+        "spatial_noise_cv": 0.3943334495618663
+    },
+    "sisyphus_weak_cooling": {
+        "gamma0": 0.2,
+        "sigma": 1.0,
+        "q_theoretical": 6.0,
+        "alpha_theoretical": -0.6,
+        "alpha_theoretical_capped": 0.0,
+        "q_empirical_pos": 1.1372319990380089,
+        "alpha_empirical_tail": 4.006713710260134,
+        "spatial_noise_cv": 0.36674021538130386
+    }
+}

@@ -1,0 +1,182 @@
+{
+    "pm_map_z1p5": {
+        "H": 0.506618595727373,
+        "bounds": [
+            127,
+            2250
+        ],
+        "r2": 0.9998849832959199,
+        "flagged": false,
+        "tail_alpha": 42.524673879222284
+    },
+    "pm_map_z2p0": {
+        "H": 0.9877811284311592,
+        "bounds": [
+            478,
+            1445
+        ],
+        "r2": 0.9994773480570127,
+        "flagged": false,
+        "tail_alpha": 22.575827885773716
+    },
+    "pm_map_z2p5": {
+        "H": 1.398264236548044,
+        "bounds": [
+            428,
+            2250
+        ],
+        "r2": 0.9982241123448735,
+        "flagged": false,
+        "tail_alpha": 0.9008985139641298
+    },
+    "ctrw_normal_wait_gaussian_jump": {
+        "H": 0.5144283557393141,
+        "bounds": [
+            12,
+            219
+        ],
+        "r2": 0.999844871129494,
+        "flagged": false,
+        "tail_alpha": 5.49586301474987
+    },
+    "ctrw_subdiff_wait_gaussian_jump": {
+        "H": 0.33743939433982145,
+        "bounds": [
+            10,
+            157
+        ],
+        "r2": 0.998692551650284,
+        "flagged": false,
+        "tail_alpha": 7.717600017773749
+    },
+    "ctrw_normal_wait_levy_jump": {
+        "H": 0.6826477498948201,
+        "bounds": [
+            10,
+            157
+        ],
+        "r2": 0.9998225346337589,
+        "flagged": false,
+        "tail_alpha": 1.6801615312447284
+    },
+    "ctrw_subdiff_wait_levy_jump": {
+        "H": 0.47617476505076106,
+        "bounds": [
+            21,
+            249
+        ],
+        "r2": 0.9984063763430386,
+        "flagged": false,
+        "tail_alpha": 1.7158595552665254
+    },
+    "levy_lorentz_alpha0p5": {
+        "H": 0.865178312784661,
+        "bounds": [
+            30,
+            249
+        ],
+        "r2": 0.998598530375892,
+        "flagged": false,
+        "tail_alpha": 139.21645524119137
+    },
+    "levy_lorentz_alpha1p0": {
+        "H": 0.9228041385399205,
+        "bounds": [
+            10,
+            168
+        ],
+        "r2": 0.9997147606415221,
+        "flagged": false,
+        "tail_alpha": 133.01350973804185
+    },
+    "levy_lorentz_alpha1p5": {
+        "H": 0.7382546710060116,
+        "bounds": [
+            23,
+            219
+        ],
+        "r2": 0.9998592879170732,
+        "flagged": false,
+        "tail_alpha": 1550.3114689168008
+    },
+    "levy_lorentz_alpha2p0": {
+        "H": 0.5884213217803285,
+        "bounds": [
+            37,
+            157
+        ],
+        "r2": 0.9998552572486447,
+        "flagged": false,
+        "tail_alpha": 4691.868814764942
+    },
+    "sisyphus_strong_cooling": {
+        "H": 0.5477399658370303,
+        "bounds": [
+            234,
+            1423
+        ],
+        "r2": 0.9998588477180979,
+        "flagged": false,
+        "tail_alpha": 6.2689077817772345
+    },
+    "sisyphus_moderate_cooling": {
+        "H": 1.0009281282100795,
+        "bounds": [
+            461,
+            2499
+        ],
+        "r2": 0.9997869894733481,
+        "flagged": false,
+        "tail_alpha": 1.5917248238923718
+    },
+    "sisyphus_weak_cooling": {
+        "H": 1.480757974997093,
+        "bounds": [
+            10,
+            1014
+        ],
+        "r2": 0.9999627215158177,
+        "flagged": false,
+        "tail_alpha": 4.006713710260134
+    },
+    "levy_stable_alpha0p5": {
+        "H": 0.507017008566923,
+        "bounds": [
+            577,
+            2499
+        ],
+        "r2": 0.9998042018197814,
+        "flagged": false,
+        "tail_alpha": 0.4914713014374041
+    },
+    "levy_stable_alpha1p0": {
+        "H": 0.9550797829022134,
+        "bounds": [
+            133,
+            1271
+        ],
+        "r2": 0.9998454022428208,
+        "flagged": false,
+        "tail_alpha": 1.0039604294709734
+    },
+    "levy_stable_alpha1p5": {
+        "H": 0.6660744348822952,
+        "bounds": [
+            27,
+            1135
+        ],
+        "r2": 0.9999602320290994,
+        "flagged": false,
+        "tail_alpha": 1.5139217238005795
+    },
+    "levy_stable_alpha2p0": {
+        "H": 0.4961565867836553,
+        "bounds": [
+            30,
+            1271
+        ],
+        "r2": 0.9999689022913344,
+        "flagged": false,
+        "tail_alpha": 9.076506440375331
+    }
+}

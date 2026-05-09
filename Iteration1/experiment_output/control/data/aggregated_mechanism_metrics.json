@@ -1,0 +1,164 @@
+{
+    "pm_map_z1p5": {
+        "H": 0.506618595727373,
+        "alpha": 42.524673879222284,
+        "mean_KL": 4.9012925076722,
+        "fidelity_score": -3.9012925076722,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "Deterministic FFP"
+    },
+    "pm_map_z2p0": {
+        "H": 0.9877811284311592,
+        "alpha": 22.575827885773716,
+        "mean_KL": 3.735025473123136,
+        "fidelity_score": -2.735025473123136,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "Deterministic FFP"
+    },
+    "pm_map_z2p5": {
+        "H": 1.398264236548044,
+        "alpha": 0.9008985139641298,
+        "mean_KL": 2.1152958376602897,
+        "fidelity_score": -1.1152958376602897,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "Deterministic FFP"
+    },
+    "ctrw_normal_wait_gaussian_jump": {
+        "H": 0.5144283557393141,
+        "alpha": 5.49586301474987,
+        "mean_KL": 0.25755674673750956,
+        "fidelity_score": 0.7424432532624905,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "FFP"
+    },
+    "ctrw_subdiff_wait_gaussian_jump": {
+        "H": 0.33743939433982145,
+        "alpha": 7.717600017773749,
+        "mean_KL": 1.0469811903336537,
+        "fidelity_score": -0.046981190333653666,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "FFP"
+    },
+    "ctrw_normal_wait_levy_jump": {
+        "H": 0.6826477498948201,
+        "alpha": 1.6801615312447284,
+        "mean_KL": 0.2568811352334715,
+        "fidelity_score": 0.7431188647665286,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "FFP"
+    },
+    "ctrw_subdiff_wait_levy_jump": {
+        "H": 0.47617476505076106,
+        "alpha": 1.7158595552665254,
+        "mean_KL": 1.0474843535998117,
+        "fidelity_score": -0.047484353599811735,
+        "ballistic_peak_ratio": NaN,
+        "q_index": NaN,
+        "effective_theory": "FFP"
+    },
+    "levy_lorentz_alpha0p5": {
+        "H": 0.865178312784661,
+        "alpha": 139.21645524119137,
+        "mean_KL": 1.8547293259896342,
+        "fidelity_score": -0.8547293259896342,
+        "ballistic_peak_ratio": 0.9983171986429451,
+        "q_index": NaN,
+        "effective_theory": "GME"
+    },
+    "levy_lorentz_alpha1p0": {
+        "H": 0.9228041385399205,
+        "alpha": 133.01350973804185,
+        "mean_KL": 0.8025711044259937,
+        "fidelity_score": 0.19742889557400634,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "GME"
+    },
+    "levy_lorentz_alpha1p5": {
+        "H": 0.7382546710060116,
+        "alpha": 1550.3114689168008,
+        "mean_KL": 0.05149821905374293,
+        "fidelity_score": 0.948501780946257,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "GME"
+    },
+    "levy_lorentz_alpha2p0": {
+        "H": 0.5884213217803285,
+        "alpha": 4691.868814764942,
+        "mean_KL": 1.9484284381617234,
+        "fidelity_score": -0.9484284381617234,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "GME"
+    },
+    "sisyphus_strong_cooling": {
+        "H": 0.5477399658370303,
+        "alpha": 6.2689077817772345,
+        "mean_KL": 0.8235072778931757,
+        "fidelity_score": 0.17649272210682432,
+        "ballistic_peak_ratio": NaN,
+        "q_index": 1.0,
+        "effective_theory": "Fractional Langevin"
+    },
+    "sisyphus_moderate_cooling": {
+        "H": 1.0009281282100795,
+        "alpha": 1.5917248238923718,
+        "mean_KL": 2.086478890388291,
+        "fidelity_score": -1.0864788903882912,
+        "ballistic_peak_ratio": NaN,
+        "q_index": 1.3665726817083155,
+        "effective_theory": "Fractional Langevin"
+    },
+    "sisyphus_weak_cooling": {
+        "H": 1.480757974997093,
+        "alpha": 4.006713710260134,
+        "mean_KL": 12.4173795218435,
+        "fidelity_score": -11.4173795218435,
+        "ballistic_peak_ratio": NaN,
+        "q_index": 1.1372319990380089,
+        "effective_theory": "Fractional Langevin"
+    },
+    "levy_stable_alpha0p5": {
+        "H": 0.507017008566923,
+        "alpha": 0.4914713014374041,
+        "mean_KL": 0.4259868807311655,
+        "fidelity_score": 0.5740131192688345,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "FFP (Ground Truth)"
+    },
+    "levy_stable_alpha1p0": {
+        "H": 0.9550797829022134,
+        "alpha": 1.0039604294709734,
+        "mean_KL": 0.04587758845766019,
+        "fidelity_score": 0.9541224115423398,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "FFP (Ground Truth)"
+    },
+    "levy_stable_alpha1p5": {
+        "H": 0.6660744348822952,
+        "alpha": 1.5139217238005795,
+        "mean_KL": 0.019627920923702538,
+        "fidelity_score": 0.9803720790762974,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "FFP (Ground Truth)"
+    },
+    "levy_stable_alpha2p0": {
+        "H": 0.4961565867836553,
+        "alpha": 9.076506440375331,
+        "mean_KL": 0.0071845760877080654,
+        "fidelity_score": 0.9928154239122919,
+        "ballistic_peak_ratio": 0.0,
+        "q_index": NaN,
+        "effective_theory": "FFP (Ground Truth)"
+    }
+}

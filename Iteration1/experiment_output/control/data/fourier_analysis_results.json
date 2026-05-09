@@ -1,0 +1,92 @@
+{
+    "pm_map_z1p5": {
+        "alpha": 2.0,
+        "time_evaluated": 3600.0,
+        "D_alpha": 0.058046035677086
+    },
+    "pm_map_z2p0": {
+        "alpha": 1.0,
+        "time_evaluated": 3600.0,
+        "D_alpha": 0.007769994081992121
+    },
+    "pm_map_z2p5": {
+        "alpha": 0.67,
+        "time_evaluated": 3600.0,
+        "D_alpha": 1.5051321123183604e-05
+    },
+    "ctrw_normal_wait_gaussian_jump": {
+        "alpha": 2.0,
+        "time_evaluated": 801.6032104492188,
+        "D_alpha": 0.1686159733638091
+    },
+    "ctrw_subdiff_wait_gaussian_jump": {
+        "alpha": 2.0,
+        "time_evaluated": 801.6032104492188,
+        "D_alpha": 0.023147579459556946
+    },
+    "ctrw_normal_wait_levy_jump": {
+        "alpha": 1.5,
+        "time_evaluated": 801.6032104492188,
+        "D_alpha": 0.3173236585994009
+    },
+    "ctrw_subdiff_wait_levy_jump": {
+        "alpha": 1.5,
+        "time_evaluated": 801.6032104492188,
+        "D_alpha": 0.0568400552186004
+    },
+    "levy_lorentz_alpha0p5": {
+        "alpha": 0.5,
+        "time_evaluated": 1603.2064208984375,
+        "D_alpha": 3.885492980664417e-05
+    },
+    "levy_lorentz_alpha1p0": {
+        "alpha": 1.0,
+        "time_evaluated": 1603.2064208984375,
+        "D_alpha": 0.15691064143341485
+    },
+    "levy_lorentz_alpha1p5": {
+        "alpha": 1.5,
+        "time_evaluated": 1603.2064208984375,
+        "D_alpha": 0.8213843474151333
+    },
+    "levy_lorentz_alpha2p0": {
+        "alpha": 2.0,
+        "time_evaluated": 1603.2064208984375,
+        "D_alpha": 3.170479403295431
+    },
+    "sisyphus_strong_cooling": {
+        "alpha": 2.0,
+        "time_evaluated": 400.0,
+        "D_alpha": 0.056696869794176236
+    },
+    "sisyphus_moderate_cooling": {
+        "alpha": 1.5917248238923718,
+        "time_evaluated": 400.0,
+        "D_alpha": 9.874095611291684
+    },
+    "sisyphus_weak_cooling": {
+        "alpha": 2.0,
+        "time_evaluated": 400.0,
+        "D_alpha": 150.83688804374157
+    },
+    "levy_stable_alpha0p5": {
+        "alpha": 0.5,
+        "time_evaluated": 4000.0,
+        "D_alpha": 0.008372486963360104
+    },
+    "levy_stable_alpha1p0": {
+        "alpha": 1.0,
+        "time_evaluated": 4000.0,
+        "D_alpha": 0.6955070483768766
+    },
+    "levy_stable_alpha1p5": {
+        "alpha": 1.5,
+        "time_evaluated": 4000.0,
+        "D_alpha": 0.899316848808087
+    },
+    "levy_stable_alpha2p0": {
+        "alpha": 2.0,
+        "time_evaluated": 4000.0,
+        "D_alpha": 0.51140945393189
+    }
+}

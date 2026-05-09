@@ -1,0 +1,90 @@
+{
+    "levy_lorentz_alpha0p5": {
+        "alpha": "0.5",
+        "time_evaluated": 1603.2064208984375,
+        "p_center": 0.0003456813679906177,
+        "p_ballistic": 0.0006360643705957017,
+        "p_mid": 0.00029096471568024716,
+        "peak_amplitude": 0.0003450996549154545,
+        "ratio_peak_to_core": 0.9983171986429451,
+        "fraction_beyond_vt": 0.0,
+        "classification": "GME-governed (L\u00e9vy walk)"
+    },
+    "levy_stable_alpha0p5": {
+        "alpha": "0.5",
+        "time_evaluated": 4000.0,
+        "p_center": 5.593573145772188e-05,
+        "p_ballistic": 0.00011039497873115535,
+        "p_mid": 0.00013043349603834666,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.92,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    },
+    "levy_lorentz_alpha1p0": {
+        "alpha": "1.0",
+        "time_evaluated": 1603.2064208984375,
+        "p_center": 0.0007382062059295267,
+        "p_ballistic": 0.00010639658914618033,
+        "p_mid": 0.0004664169949983163,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.0,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    },
+    "levy_stable_alpha1p0": {
+        "alpha": "1.0",
+        "time_evaluated": 4000.0,
+        "p_center": 7.744649832553054e-05,
+        "p_ballistic": 6.960636161658769e-05,
+        "p_mid": 0.00012497387122386926,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.46,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    },
+    "levy_lorentz_alpha1p5": {
+        "alpha": "1.5",
+        "time_evaluated": 1603.2064208984375,
+        "p_center": 0.0020311528569901378,
+        "p_ballistic": 1.4514180059880434e-05,
+        "p_mid": 0.00011092320209510388,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.0,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    },
+    "levy_stable_alpha1p5": {
+        "alpha": "1.5",
+        "time_evaluated": 4000.0,
+        "p_center": 0.0009944039155473895,
+        "p_ballistic": 5.027823426052432e-06,
+        "p_mid": 3.178422615628946e-05,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.0,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    },
+    "levy_lorentz_alpha2p0": {
+        "alpha": "2.0",
+        "time_evaluated": 1603.2064208984375,
+        "p_center": 0.003630491789159992,
+        "p_ballistic": 1.0840153762238354e-93,
+        "p_mid": 1.5086828232634672e-07,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.0,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    },
+    "levy_stable_alpha2p0": {
+        "alpha": "2.0",
+        "time_evaluated": 4000.0,
+        "p_center": 0.005173672211115539,
+        "p_ballistic": 0.0,
+        "p_mid": 4.564035574172127e-235,
+        "peak_amplitude": 0.0,
+        "ratio_peak_to_core": 0.0,
+        "fraction_beyond_vt": 0.0,
+        "classification": "FFP-governed (L\u00e9vy flight)"
+    }
+}

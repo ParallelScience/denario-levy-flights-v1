@@ -2,100 +2,94 @@
     "sub_tasks": [
         {
             "bullet_points": [
-                "Load all `.npy` trajectory datasets and the `metadata.json` file.",
-                "Standardize all trajectories such that the initial position is 0.",
-                "For Pomeau-Manneville (PM) maps, discard the first 500 steps to ensure steady-state intermittency.",
-                "Implement Detrended Fluctuation Analysis (DFA) to compute the fluctuation function $F(s)$ over at least 10 logarithmically-spaced window sizes spanning from $s_{min}=10$ steps to $s_{max}=N/4$ (where $N$ is the trajectory length after preprocessing).",
-                "Extract the Hurst exponent $H$ via log-log linear regression and report the R-squared value as a quality metric.",
-                "Verify the 20% scaling regime check: flag datasets where R-squared falls below 0.95 and print a warning rather than silently proceeding.",
-                "Save the preprocessed trajectories, DFA fluctuation functions, and extracted $H$ values to disk."
+                "Load all .npy datasets and metadata.json from the provided absolute paths.",
+                "Standardize all trajectories to x(0)=0. For Pomeau-Manneville (PM) maps, discard the initial 500 steps to ensure steady-state intermittency.",
+                "Implement Detrended Fluctuation Analysis (DFA) to extract robust Hurst exponents H for each mechanism.",
+                "Fit the tail exponent alpha from the complementary CDF of step increments for each dataset.",
+                "Verify that the anomalous scaling regime spans at least 20% of the total trajectory length. Flag datasets that do not meet this criterion.",
+                "Explicitly print all DFA-derived Hurst exponents numerically to the console (with dataset name, H value, and scaling regime bounds), as well as the fitted alpha values.",
+                "Save the preprocessed data, DFA results, and fitted alpha values, and generate a plot of the DFA fluctuation functions."
             ],
-            "sub_task": "Data Preprocessing and DFA",
+            "sub_task": "Data Preprocessing, Tail Fitting, and Detrended Fluctuation Analysis (DFA)",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Load the preprocessed trajectories.",
-                "Calculate the Mean Squared Displacement (MSD) and the local scaling exponent $H(\\tau)$ using a sliding window derivative of the log-log MSD. Explicitly handle the different time grids for each mechanism (CTRW 500 pts [0,1000], Levy-Lorentz 500 pts [0,2000], PM/Sisyphus 5001 pts [0,5000] or [0,500]).",
-                "Compute the local scaling exponent using a sliding window of at least 5 consecutive log-spaced lag points to reduce noise.",
-                "Identify the crossover time $\\tau_c$ defined as the lag where $H(\\tau)$ first drops below 0.75 (midpoint between ballistic $H=1$ and typical anomalous $H \\approx 0.5$).",
-                "Generate plots of $H(\\tau)$ versus time lag $\\tau$ using log-log axes, including horizontal reference lines at $H=0.5$, $H=0.75$, and $H=1.0$, marking the crossover times.",
-                "Save the computed local scaling exponents and crossover times to disk."
+                "Calculate the local scaling exponent H(tau) = d(log sqrt(<x^2(tau)>)) / d(log tau) using a sliding window for ALL mechanism families (PM maps, CTRW, Lévy-Lorentz, Sisyphus, and pure Lévy stable).",
+                "Identify the crossover time tau_c where the system transitions from ballistic (H approx 1) to anomalous diffusion (H approx 1/alpha).",
+                "Use the persistence of the ballistic front at x approx +/- vt as a diagnostic to distinguish between Lévy walks and Lévy flights.",
+                "Save the crossover times and local scaling exponents. Generate plots of H(tau) vs tau for all datasets."
             ],
-            "sub_task": "Crossover Analysis",
+            "sub_task": "Crossover Analysis (Ballistic to Anomalous)",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Load the preprocessed trajectories and the pure L\u0000\u0000vy-stable reference datasets.",
-                "Compute the empirical probability density $P(x, t)$ at time points $t = [T/10, T/4, T/2, T]$ (where $T$ is the total trajectory duration for each dataset).",
-                "For the Sisyphus cooling datasets, calculate the Kurtosis and the Tsallis $q$-index of the central peak to quantify deviations from the FFP propagator.",
-                "Normalize the empirical probability densities by their respective time-dependent scaling factors $t^{1/\\alpha}$ (using $\\alpha$ from metadata).",
-                "Compute the Kullback-Leibler (KL) divergence between these normalized distributions and the corresponding pure L\u0000\u0000vy-stable reference distributions. Estimate both distributions on the same grid using kernel density estimation (KDE) with a common bandwidth, and add a small epsilon floor (e.g., 1e-10) before computing the KL divergence to avoid log(0) errors.",
-                "Generate plots of the normalized empirical probability densities $P(x, t)$ overlaid with the pure L\u0000\u0000vy-stable reference to visualize tail fidelity.",
-                "Create plots showing the KL divergence as a function of the tail index $\\alpha$ or time.",
-                "Generate plots of the Kurtosis and Tsallis $q$-index for the Sisyphus cooling models.",
-                "Save all computed metrics, probability densities, and generated plots to disk."
+                "Compute the empirical probability density P(x, t) at various time steps.",
+                "For Sisyphus cooling datasets, calculate the Kurtosis and the Tsallis q-index of the central peak to quantify deviations from the Fractional Fokker-Planck (FFP) propagator.",
+                "Normalize the empirical probability densities P(x,t) by their respective time-dependent scaling factors t^(1/alpha) using a consistent alpha value (derived from the tail fitting in Step 1 or from known ground-truth parameters).",
+                "Compute the Kullback-Leibler (KL) divergence between these normalized distributions and the pure Lévy-stable reference.",
+                "Print the KL divergence values numerically for each mechanism and time step to the console.",
+                "Save the computed metrics (Kurtosis, q-index, KL divergence) and generate plots of the normalized distributions."
             ],
-            "sub_task": "Core-Tail Decomposition, Non-Extensive Metrics, and Plotting",
+            "sub_task": "Core-Tail Decomposition and Non-Extensive Metrics",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Load the preprocessed trajectories for the L\u0000\u0000vy-Lorentz gas datasets.",
-                "Compute the histogram of positions at time $t$ to estimate the empirical probability density $P(x, t)$.",
-                "Explicitly detect the \"ballistic peaks\" by searching for local maxima in the tails at $|x| > 0.8vt$ using a peak finding algorithm with a minimum prominence threshold.",
-                "Quantify the core-to-peak amplitude ratio, defined as the ratio of the histogram density at $x=0$ to the maximum density found in the ballistic tail region. Print this ratio numerically for each $\\alpha$ value and time point.",
-                "Use this core-to-peak ratio to classify the mechanism as GME-governed (L\u0000\u0000vy walk) or FFP-governed (L\u0000\u0000vy flight).",
-                "Generate plots of $P(x, t)$ for the L\u0000\u0000vy-Lorentz gas, highlighting the ballistic peaks and the central core.",
-                "Save the computed ratios and classification metrics to disk."
+                "For the Lévy-Lorentz gas datasets, explicitly detect the ballistic peaks in the propagator P(x, t) at x approx +/- vt.",
+                "Also compute the ballistic peak detection for the pure Lévy stable reference at matching alpha values for direct comparison.",
+                "Quantify the amplitude of these peaks relative to the central Lévy-stable core.",
+                "Use this ratio as an objective metric to classify the mechanism as Generalized Master Equation (GME)-governed (Lévy walk) or FFP-governed (Lévy flight).",
+                "Save the computed ratios and generate plots of P(x,t) highlighting the ballistic peaks and the central core."
             ],
-            "sub_task": "L\u0000\u0000vy Walk vs. L\u0000\u0000vy Flight Classification",
+            "sub_task": "Lévy Walk vs. Lévy Flight Classification",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Load the Sisyphus cooling datasets and their parameters from the metadata.",
-                "Estimate the momentum $p$ from the position trajectories ($p = dx/dt$). Smooth the estimated momentum time series using a rolling average with a window of at least 5 time steps before binning.",
-                "Estimate the local drift $A(p)$ and diffusion $B(p)$ using the Kramers-Moyal first and second conditional moments ($A(p) = E[dp | p(t)=p]/dt$ and $B(p) = E[dp^2 | p(t)=p]/dt$), binned over at least 30 momentum bins with equal occupancy.",
+                "Estimate the local drift A(p) and diffusion B(p) using the parameters from metadata.json (gamma_0, p_0). Note that momentum p can be estimated from the position trajectories as dx/dt, requiring careful finite-difference handling given the discrete time steps.",
                 "Project the resulting effective noise back into position space to determine if the effective fractional operator is spatially dependent.",
-                "Correlate the derived fractional order $\\alpha$ with the input physical parameters to link microscopic friction to the macroscopic operator.",
-                "Generate plots of the effective drift and diffusion, and the derived fractional order $\\alpha$.",
-                "Save the derived parameters to disk."
+                "Correlate the derived fractional order alpha with the input physical parameters to link microscopic friction to the macroscopic operator.",
+                "Print the estimated effective alpha values for each Sisyphus cooling regime (strong, moderate, weak) alongside the theoretical prediction from the Tsallis q-index relationship alpha = (3-q)/(q-1).",
+                "Save the derived parameters and generate plots of the effective drift and diffusion."
             ],
             "sub_task": "Effective Fractional Operator Derivation (Sisyphus Cooling)",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Load the preprocessed trajectories.",
-                "Compute the empirical characteristic function $\\phi(k, t)$ for each mechanism at selected time points using the empirical mean over all 200 trajectories of $\\exp(ik(x(t)-x(0)))$.",
-                "Estimate the $D_\\alpha$ coefficient in the theoretical FFP reference by fitting $\\log|\\phi(k,t)| = -D_\\alpha |k|^\\alpha t$ using least-squares regression over the low-k regime ($|k| < k_{max}$ where $|\\phi(k,t)| > 0.1$ to avoid noise-dominated high-k values).",
-                "Calculate the ratio of the empirical $\\phi(k, t)$ to the theoretical FFP characteristic function $\\exp(-D_\\alpha |k|^\\alpha t)$.",
-                "Generate plots of the characteristic function ratios in Fourier space, showing the deviation from 1.0 on a linear scale, with a shaded band indicating +/- 10% tolerance. Focus on the high-frequency regime to identify specific scales where the FFP approximation fails.",
-                "Save the Fourier space metrics to disk."
+                "Compute the empirical characteristic function phi(k, t) for the different mechanisms.",
+                "Calculate the ratio of phi(k, t) to the theoretical FFP characteristic function exp(-D_alpha |k|^alpha t).",
+                "Focus the analysis on the high-frequency regime where k > 1/L_corr (with L_corr as the correlation length) to identify the specific scales where the FFP approximation fails.",
+                "Estimate the generalized diffusion coefficient D_alpha empirically from the characteristic function fits (by fitting log|phi(k,t)| vs |k|^alpha t), and print the fitted D_alpha values for each mechanism.",
+                "Save the Fourier analysis results, fitted D_alpha values, and generate plots of the characteristic function ratios."
             ],
             "sub_task": "Boundary Delineation in Fourier Space",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Load the extracted Hurst exponents $H$, tail indices $\\alpha$, KL divergences, and classification metrics from previous steps.",
-                "Construct a classification matrix assigning each mechanism to its effective theory (e.g., L\u0000\u0000vy-Lorentz to GME, Sisyphus to Fractional Langevin, CTRW to FFP). The matrix should be a structured table with rows for each mechanism/parameter combination and columns for: DFA Hurst exponent $H$, tail index $\\alpha$ (from KL analysis), KL divergence to L\u0000\u0000vy-stable reference, ballistic peak ratio (for L\u0000\u0000vy-Lorentz), Tsallis $q$-index (for Sisyphus), and assigned effective theory operator.",
-                "Print this table to the console in full and save it as a CSV file.",
-                "Generate a comprehensive summary plot mapping the KL-divergence against the DFA-derived $H$ and the tail index $\\alpha$ to delineate universality classes.",
-                "Save the summary plots to disk."
+                "Aggregate all computed metrics: DFA-derived H, tail index alpha, KL-divergence, ballistic peak ratios, and Tsallis q-index.",
+                "Construct a classification matrix assigning each mechanism to its effective theory: Velocity-constrained (Lévy-Lorentz) -> GME, Friction-dominated (Sisyphus) -> Fractional Langevin, Jump-dominated (CTRW) -> FFP.",
+                "Compute and print a quantitative Lévy fidelity score for each mechanism — defined as 1 minus the mean KL divergence from the pure Lévy stable reference across all time steps — and rank the mechanisms by this score.",
+                "Generate summary plots mapping the KL-divergence as a function of the tail index alpha and the DFA-derived scaling exponent H to delineate universality classes.",
+                "Save the final aggregated dataset and the summary plots."
             ],
-            "sub_task": "Synthesis and Mechanism-to-Operator Mapping",
+            "sub_task": "Mechanism-to-Operator Mapping and Synthesis",
             "sub_task_agent": "engineer"
         },
         {
             "bullet_points": [
-                "Write the full Results section of the paper based on the generated plots, saved metrics, and classification matrix.",
-                "Interpret the DFA scaling, crossover analysis, core-tail decomposition, and Fourier space boundaries.",
-                "Discuss the distinction between L\u0000\u0000vy walks and L\u0000\u0000vy flights based on the ballistic peak analysis.",
-                "Explain the effective fractional operator derivation for Sisyphus cooling.",
-                "Synthesize the findings to identify the minimal effective theory for anomalous diffusion. Explicitly quantify the \"minimal effective theory\" criterion by comparing the number of free parameters required by each mechanism's effective description, and rank the mechanisms by their KL divergence to the L\u0000\u0000vy-stable reference normalized by their parameter count, providing a formal parsimony argument."
+                "Write the full Results section of the paper or report.",
+                "Interpret the DFA and crossover analysis results, discussing the transition from ballistic to anomalous diffusion.",
+                "Discuss the core-tail decomposition, non-extensive metrics, and the KL divergence results.",
+                "Explain the Lévy Walk vs. Lévy Flight classification based on the ballistic peaks in the Lévy-Lorentz gas.",
+                "Discuss the effective fractional operator derivation for Sisyphus cooling and the boundary delineation in Fourier space.",
+                "Present the mechanism-to-operator mapping and synthesize the minimal effective theory based on the summary plots.",
+                "Explicitly address the question of which single mechanism (or combination) constitutes the minimal effective theory, citing the Lévy fidelity scores, DFA exponents, and KL divergence values from previous steps.",
+                "Discuss whether the CTRW with Lévy jumps or the pure Lévy stable process itself is the most parsimonious description.",
+                "Ensure all qualitative and quantitative results, interpretations of plots, and key statistics are included and properly referenced."
             ],
             "sub_task": "Final Report",
             "sub_task_agent": "researcher"

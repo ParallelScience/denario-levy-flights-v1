@@ -1,0 +1,416 @@
+{
+    "pm_map_z1p5": {
+        "time_900": {
+            "time_index": 900,
+            "time_value": 900.0,
+            "kl_divergence": 1.5828803440876569,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2250": {
+            "time_index": 2250,
+            "time_value": 2250.0,
+            "kl_divergence": 3.6970995345692814,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4455": {
+            "time_index": 4455,
+            "time_value": 4455.0,
+            "kl_divergence": 9.423897644359663,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "pm_map_z2p0": {
+        "time_900": {
+            "time_index": 900,
+            "time_value": 900.0,
+            "kl_divergence": 3.5199582768701703,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2250": {
+            "time_index": 2250,
+            "time_value": 2250.0,
+            "kl_divergence": 3.7492881961051157,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4455": {
+            "time_index": 4455,
+            "time_value": 4455.0,
+            "kl_divergence": 3.9358299463941213,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "pm_map_z2p5": {
+        "time_900": {
+            "time_index": 900,
+            "time_value": 900.0,
+            "kl_divergence": 1.5574977766503484,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2250": {
+            "time_index": 2250,
+            "time_value": 2250.0,
+            "kl_divergence": 2.143620757279968,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4455": {
+            "time_index": 4455,
+            "time_value": 4455.0,
+            "kl_divergence": 2.644768979050554,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "ctrw_normal_wait_gaussian_jump": {
+        "time_200.4": {
+            "time_index": 100,
+            "time_value": 200.4008026123047,
+            "kl_divergence": 0.21233254649051,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_501.0": {
+            "time_index": 250,
+            "time_value": 501.00201416015625,
+            "kl_divergence": 0.26246464893869886,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_992.0": {
+            "time_index": 495,
+            "time_value": 991.9839477539062,
+            "kl_divergence": 0.29787304478331983,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "ctrw_subdiff_wait_gaussian_jump": {
+        "time_200.4": {
+            "time_index": 100,
+            "time_value": 200.4008026123047,
+            "kl_divergence": 0.9013728972461288,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_501.0": {
+            "time_index": 250,
+            "time_value": 501.00201416015625,
+            "kl_divergence": 1.028212680402682,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_992.0": {
+            "time_index": 495,
+            "time_value": 991.9839477539062,
+            "kl_divergence": 1.2113579933521499,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "ctrw_normal_wait_levy_jump": {
+        "time_200.4": {
+            "time_index": 100,
+            "time_value": 200.4008026123047,
+            "kl_divergence": 0.21178434880521874,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_501.0": {
+            "time_index": 250,
+            "time_value": 501.00201416015625,
+            "kl_divergence": 0.3091038419289384,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_992.0": {
+            "time_index": 495,
+            "time_value": 991.9839477539062,
+            "kl_divergence": 0.24975521496625744,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "ctrw_subdiff_wait_levy_jump": {
+        "time_200.4": {
+            "time_index": 100,
+            "time_value": 200.4008026123047,
+            "kl_divergence": 0.9163190099669136,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_501.0": {
+            "time_index": 250,
+            "time_value": 501.00201416015625,
+            "kl_divergence": 1.0654124688328774,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_992.0": {
+            "time_index": 495,
+            "time_value": 991.9839477539062,
+            "kl_divergence": 1.1607215819996446,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_lorentz_alpha0p5": {
+        "time_400.8": {
+            "time_index": 100,
+            "time_value": 400.8016052246094,
+            "kl_divergence": 1.076192841925677,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1002.0": {
+            "time_index": 250,
+            "time_value": 1002.0040283203125,
+            "kl_divergence": 1.909652158704533,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1984.0": {
+            "time_index": 495,
+            "time_value": 1983.9678955078125,
+            "kl_divergence": 2.5783429773386928,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_lorentz_alpha1p0": {
+        "time_400.8": {
+            "time_index": 100,
+            "time_value": 400.8016052246094,
+            "kl_divergence": 0.7208117356735959,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1002.0": {
+            "time_index": 250,
+            "time_value": 1002.0040283203125,
+            "kl_divergence": 0.8019207728832554,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1984.0": {
+            "time_index": 495,
+            "time_value": 1983.9678955078125,
+            "kl_divergence": 0.8849808047211297,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_lorentz_alpha1p5": {
+        "time_400.8": {
+            "time_index": 100,
+            "time_value": 400.8016052246094,
+            "kl_divergence": 0.031042395697274617,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1002.0": {
+            "time_index": 250,
+            "time_value": 1002.0040283203125,
+            "kl_divergence": 0.04667586418145628,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1984.0": {
+            "time_index": 495,
+            "time_value": 1983.9678955078125,
+            "kl_divergence": 0.07677639728249791,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_lorentz_alpha2p0": {
+        "time_400.8": {
+            "time_index": 100,
+            "time_value": 400.8016052246094,
+            "kl_divergence": 1.5636158304208563,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1002.0": {
+            "time_index": 250,
+            "time_value": 1002.0040283203125,
+            "kl_divergence": 2.16187408080416,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_1984.0": {
+            "time_index": 495,
+            "time_value": 1983.9678955078125,
+            "kl_divergence": 2.119795403260154,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "sisyphus_strong_cooling": {
+        "time_100.0": {
+            "time_index": 1000,
+            "time_value": 100.0,
+            "kl_divergence": 0.840108416886781,
+            "kurtosis": 2.8842904567718506,
+            "q_index": 1.0
+        },
+        "time_250.0": {
+            "time_index": 2500,
+            "time_value": 250.0,
+            "kl_divergence": 0.8194963422438035,
+            "kurtosis": 2.6757092475891113,
+            "q_index": 1.0
+        },
+        "time_495.0": {
+            "time_index": 4950,
+            "time_value": 495.0,
+            "kl_divergence": 0.8109170745489426,
+            "kurtosis": 2.7852072715759277,
+            "q_index": 1.0
+        }
+    },
+    "sisyphus_moderate_cooling": {
+        "time_100.0": {
+            "time_index": 1000,
+            "time_value": 100.0,
+            "kl_divergence": 1.4672188756953317,
+            "kurtosis": 18.76805305480957,
+            "q_index": 1.3717115453110902
+        },
+        "time_250.0": {
+            "time_index": 2500,
+            "time_value": 250.0,
+            "kl_divergence": 2.08477536719957,
+            "kurtosis": 17.367692947387695,
+            "q_index": 1.3691669149936216
+        },
+        "time_495.0": {
+            "time_index": 4950,
+            "time_value": 495.0,
+            "kl_divergence": 2.7074424282699723,
+            "kurtosis": 13.461689949035645,
+            "q_index": 1.358839584820235
+        }
+    },
+    "sisyphus_weak_cooling": {
+        "time_100.0": {
+            "time_index": 1000,
+            "time_value": 100.0,
+            "kl_divergence": 12.288190560396334,
+            "kurtosis": 3.3425145149230957,
+            "q_index": 1.0888197839590954
+        },
+        "time_250.0": {
+            "time_index": 2500,
+            "time_value": 250.0,
+            "kl_divergence": 12.472783644001103,
+            "kurtosis": 3.488976240158081,
+            "q_index": 1.1158041726181571
+        },
+        "time_495.0": {
+            "time_index": 4950,
+            "time_value": 495.0,
+            "kl_divergence": 12.491164361133066,
+            "kurtosis": 4.287975311279297,
+            "q_index": 1.2070720405367736
+        }
+    },
+    "levy_stable_alpha0p5": {
+        "time_1000": {
+            "time_index": 1000,
+            "time_value": 1000.0,
+            "kl_divergence": 0.5908735204887277,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2500": {
+            "time_index": 2500,
+            "time_value": 2500.0,
+            "kl_divergence": 0.18429716914250005,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4950": {
+            "time_index": 4950,
+            "time_value": 4950.0,
+            "kl_divergence": 0.5027899525622685,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_stable_alpha1p0": {
+        "time_1000": {
+            "time_index": 1000,
+            "time_value": 1000.0,
+            "kl_divergence": 0.033195973458437736,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2500": {
+            "time_index": 2500,
+            "time_value": 2500.0,
+            "kl_divergence": 0.033406570019287186,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4950": {
+            "time_index": 4950,
+            "time_value": 4950.0,
+            "kl_divergence": 0.07103022189525567,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_stable_alpha1p5": {
+        "time_1000": {
+            "time_index": 1000,
+            "time_value": 1000.0,
+            "kl_divergence": 0.020547181452204098,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2500": {
+            "time_index": 2500,
+            "time_value": 2500.0,
+            "kl_divergence": 0.019978541050615,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4950": {
+            "time_index": 4950,
+            "time_value": 4950.0,
+            "kl_divergence": 0.018358040268288515,
+            "kurtosis": null,
+            "q_index": null
+        }
+    },
+    "levy_stable_alpha2p0": {
+        "time_1000": {
+            "time_index": 1000,
+            "time_value": 1000.0,
+            "kl_divergence": 0.00988728554354451,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_2500": {
+            "time_index": 2500,
+            "time_value": 2500.0,
+            "kl_divergence": 0.006309751298612342,
+            "kurtosis": null,
+            "q_index": null
+        },
+        "time_4950": {
+            "time_index": 4950,
+            "time_value": 4950.0,
+            "kl_divergence": 0.0053566914209673445,
+            "kurtosis": null,
+            "q_index": null
+        }
+    }
+}

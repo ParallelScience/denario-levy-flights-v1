@@ -6,149 +6,116 @@ sys.path.insert(0, "/home/node/data/compsep_data/")
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
-
-def estimate_alpha_mle(data, tail_fraction=0.1):
-    data_abs = np.abs(data)
-    p_min = np.percentile(data_abs, 100 * (1 - tail_fraction))
-    tail_data = data_abs[data_abs >= p_min]
-    if len(tail_data) == 0:
-        return np.nan
-    log_vals = np.log(tail_data / p_min)
-    log_vals = log_vals[log_vals > 0]
-    if len(log_vals) == 0:
-        return np.nan
-    alpha = len(log_vals) / np.sum(log_vals)
-    return alpha
+import time
 
 def main():
     plt.rcParams['text.usetex'] = False
-    data_dir = 'data/'
-    metadata_path = '/home/node/work/projects/levy_flights_v1/data/metadata.json'
-    metadata = {}
-    if os.path.exists(metadata_path):
-        with open(metadata_path, 'r') as f:
-            metadata = json.load(f)
-    files = ['preprocessed_sisyphus_strong_cooling.npy', 'preprocessed_sisyphus_moderate_cooling.npy', 'preprocessed_sisyphus_weak_cooling.npy']
-    dt = 0.1
-    window = 5
-    num_bins = 30
+    data_dir = 'data'
+    preprocessed_path = os.path.join(data_dir, 'preprocessed_trajectories.npz')
+    if not os.path.exists(preprocessed_path):
+        return
+    preprocessed = np.load(preprocessed_path)
+    step1_path = os.path.join(data_dir, 'dfa_and_tail_results.json')
+    if os.path.exists(step1_path):
+        with open(step1_path, 'r') as f:
+            step1_results = json.load(f)
+    else:
+        step1_results = {}
+    step3_path = os.path.join(data_dir, 'core_tail_metrics.json')
+    if os.path.exists(step3_path):
+        with open(step3_path, 'r') as f:
+            step3_results = json.load(f)
+    else:
+        step3_results = {}
+    sisyphus_datasets = {'sisyphus_strong_cooling': {'gamma0': 5.0, 'p0': 1.0, 'sigma': 1.0, 'dt': 0.1}, 'sisyphus_moderate_cooling': {'gamma0': 1.0, 'p0': 1.0, 'sigma': 1.0, 'dt': 0.1}, 'sisyphus_weak_cooling': {'gamma0': 0.2, 'p0': 1.0, 'sigma': 1.0, 'dt': 0.1}}
+    timestamp = int(time.time())
+    fig, axes = plt.subplots(3, 3, figsize=(15, 12))
     results = {}
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    plot_number = 1
-    gamma0_list = []
-    alpha_mle_list = []
-    for f in files:
-        filepath = os.path.join(data_dir, f)
-        if not os.path.exists(filepath):
+    for i, (name, params) in enumerate(sisyphus_datasets.items()):
+        if name not in preprocessed:
             continue
-        data = np.load(filepath)
-        orig_f = f.replace('preprocessed_', '')
-        gamma0 = metadata.get(orig_f, {}).get('gamma0', None)
-        if gamma0 is None:
-            if 'strong' in f: gamma0 = 5.0
-            elif 'moderate' in f: gamma0 = 1.0
-            elif 'weak' in f: gamma0 = 0.2
-        p_raw = (data[:, 1:] - data[:, :-1]) / dt
-        kernel = np.ones(window) / window
-        p_smoothed = np.apply_along_axis(lambda m: np.convolve(m, kernel, mode='valid'), axis=1, arr=p_raw)
-        dp = p_smoothed[:, 1:] - p_smoothed[:, :-1]
-        p_current = p_smoothed[:, :-1]
-        offset = window // 2
-        x_current = data[:, offset : offset + p_current.shape[1]]
-        p_flat = p_current.flatten()
+        data = preprocessed[name]
+        dt = params['dt']
+        gamma0 = params['gamma0']
+        p0 = params['p0']
+        sigma = params['sigma']
+        p = (data[:, 1:] - data[:, :-1]) / dt
+        dp = p[:, 1:] - p[:, :-1]
+        p_flat = p[:, :-1].flatten()
         dp_flat = dp.flatten()
-        x_flat = x_current.flatten()
-        alpha_mle = estimate_alpha_mle(p_flat, tail_fraction=0.1)
-        gamma0_list.append(gamma0)
-        alpha_mle_list.append(alpha_mle)
-        sort_idx = np.argsort(p_flat)
-        p_sorted = p_flat[sort_idx]
-        dp_sorted = dp_flat[sort_idx]
-        bin_edges = np.array_split(np.arange(len(p_sorted)), num_bins)
-        p_bins = []
-        A_p = []
-        B_p = []
-        for b in bin_edges:
-            p_bins.append(np.mean(p_sorted[b]))
-            A_p.append(np.mean(dp_sorted[b]) / dt)
-            B_p.append(np.mean(dp_sorted[b]**2) / dt)
-        sort_idx_x = np.argsort(x_flat)
-        x_sorted = x_flat[sort_idx_x]
-        dp_sorted_x = dp_flat[sort_idx_x]
-        bin_edges_x = np.array_split(np.arange(len(x_sorted)), num_bins)
-        x_bins = []
-        A_x = []
-        B_x = []
-        for b in bin_edges_x:
-            x_bins.append(np.mean(x_sorted[b]))
-            A_x.append(np.mean(dp_sorted_x[b]) / dt)
-            B_x.append(np.mean(dp_sorted_x[b]**2) / dt)
-        b_x_mean = np.mean(B_x)
-        b_x_std = np.std(B_x)
-        cv_b_x = b_x_std / b_x_mean if b_x_mean != 0 else 0
-        results[orig_f] = {'gamma0': gamma0, 'alpha_mle': alpha_mle, 'cv_b_x': cv_b_x, 'p_bins': np.array(p_bins).tolist(), 'A_p': np.array(A_p).tolist(), 'B_p': np.array(B_p).tolist(), 'x_bins': np.array(x_bins).tolist(), 'A_x': np.array(A_x).tolist(), 'B_x': np.array(B_x).tolist()}
-        fig, axs = plt.subplots(1, 2, figsize=(12, 5))
-        axs[0].plot(p_bins, A_p, 'bo', label='Empirical A(p)')
-        p_grid = np.linspace(min(p_bins), max(p_bins), 100)
-        A_theory = -gamma0 * p_grid / (1 + p_grid**2)
-        axs[0].plot(p_grid, A_theory, 'r-', label='Theoretical A(p)')
-        axs[0].set_xlabel('Momentum p')
-        axs[0].set_ylabel('Drift A(p)')
-        axs[0].set_title('Effective Drift vs Momentum (' + orig_f + ')')
-        axs[0].legend()
-        axs[0].grid(True, linestyle='--', alpha=0.7)
-        axs[1].plot(p_bins, B_p, 'go', label='Empirical B(p)')
-        B_theory = np.ones_like(p_grid) * (1.0 / window)
-        axs[1].plot(p_grid, B_theory, 'r-', label='Theoretical B(p) (smoothed)')
-        axs[1].set_xlabel('Momentum p')
-        axs[1].set_ylabel('Diffusion B(p)')
-        axs[1].set_title('Effective Diffusion vs Momentum (' + orig_f + ')')
-        axs[1].legend()
-        axs[1].grid(True, linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plot_filename = 'sisyphus_KM_p_' + orig_f.replace('.npy', '') + '_' + str(plot_number) + '_' + timestamp + '.png'
-        plt.savefig(os.path.join(data_dir, plot_filename), dpi=300)
-        plt.close()
-        plot_number += 1
-        fig, axs = plt.subplots(1, 2, figsize=(12, 5))
-        axs[0].plot(x_bins, A_x, 'bo', label='Empirical A(x)')
-        axs[0].set_xlabel('Position x')
-        axs[0].set_ylabel('Drift A(x)')
-        axs[0].set_title('Effective Drift vs Position (' + orig_f + ')')
-        axs[0].legend()
-        axs[0].grid(True, linestyle='--', alpha=0.7)
-        axs[1].plot(x_bins, B_x, 'go', label='Empirical B(x)')
-        axs[1].set_xlabel('Position x')
-        axs[1].set_ylabel('Diffusion B(x)')
-        axs[1].set_title('Effective Diffusion vs Position (' + orig_f + ')')
-        axs[1].legend()
-        axs[1].grid(True, linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plot_filename = 'sisyphus_KM_x_' + orig_f.replace('.npy', '') + '_' + str(plot_number) + '_' + timestamp + '.png'
-        plt.savefig(os.path.join(data_dir, plot_filename), dpi=300)
-        plt.close()
-        plot_number += 1
-    if len(gamma0_list) > 0:
-        plt.figure(figsize=(8, 6))
-        sort_idx = np.argsort(gamma0_list)
-        g_sorted = np.array(gamma0_list)[sort_idx]
-        a_sorted = np.array(alpha_mle_list)[sort_idx]
-        plt.plot(g_sorted, a_sorted, 'bo-', markersize=8, label='Empirical MLE')
-        g_grid = np.linspace(min(g_sorted), max(g_sorted), 100)
-        alpha_theory = 2 * g_grid - 1
-        alpha_theory_clipped = np.clip(alpha_theory, 0, 2)
-        plt.plot(g_grid, alpha_theory_clipped, 'r--', label='Theoretical alpha (clipped 0-2)')
-        plt.xlabel('Friction parameter gamma0')
-        plt.ylabel('Derived fractional order alpha')
-        plt.title('Fractional Order vs Microscopic Friction')
-        plt.legend()
-        plt.grid(True, linestyle='--', alpha=0.7)
-        plt.tight_layout()
-        plot_filename = 'sisyphus_alpha_vs_gamma0_' + str(plot_number) + '_' + timestamp + '.png'
-        plt.savefig(os.path.join(data_dir, plot_filename), dpi=300)
-        plt.close()
-    with open(os.path.join(data_dir, 'langevin_estimates.json'), 'w') as f:
+        x_flat = data[:, 1:-1].flatten()
+        valid_p = ~np.isnan(p_flat)
+        p_flat = p_flat[valid_p]
+        dp_flat = dp_flat[valid_p]
+        x_flat = x_flat[valid_p]
+        p_min, p_max = np.percentile(p_flat, [1, 99])
+        p_bins = np.linspace(p_min, p_max, 50)
+        p_bin_centers = (p_bins[:-1] + p_bins[1:]) / 2
+        A_emp = np.zeros_like(p_bin_centers)
+        B_emp = np.zeros_like(p_bin_centers)
+        for j in range(len(p_bins)-1):
+            mask = (p_flat >= p_bins[j]) & (p_flat < p_bins[j+1])
+            if np.sum(mask) > 20:
+                A_emp[j] = np.mean(dp_flat[mask]) / dt
+                B_emp[j] = np.var(dp_flat[mask]) / (2 * dt)
+            else:
+                A_emp[j] = np.nan
+                B_emp[j] = np.nan
+        A_th = -gamma0 * p_bin_centers / (1 + (p_bin_centers / p0)**2)
+        B_th = np.ones_like(p_bin_centers) * (sigma**2 / 2)
+        x_min, x_max = np.percentile(x_flat, [5, 95])
+        x_bins = np.linspace(x_min, x_max, 50)
+        x_bin_centers = (x_bins[:-1] + x_bins[1:]) / 2
+        noise_x = np.zeros_like(x_bin_centers)
+        for j in range(len(x_bins)-1):
+            mask = (x_flat >= x_bins[j]) & (x_flat < x_bins[j+1])
+            if np.sum(mask) > 20:
+                noise_x[j] = np.var(p_flat[mask]) * dt**2
+            else:
+                noise_x[j] = np.nan
+        ax = axes[i, 0]
+        ax.plot(p_bin_centers, A_emp, 'bo', label='Empirical A(p)')
+        ax.plot(p_bin_centers, A_th, 'r-', lw=2, label='Theoretical A(p)')
+        ax.set_title(name + "\nDrift A(p)", fontsize=10)
+        ax.set_xlabel("Momentum p", fontsize=10)
+        ax.set_ylabel("A(p)", fontsize=10)
+        ax.grid(True, alpha=0.3)
+        ax.legend(fontsize=8)
+        ax = axes[i, 1]
+        ax.plot(p_bin_centers, B_emp, 'go', label='Empirical B(p)')
+        ax.plot(p_bin_centers, B_th, 'r-', lw=2, label='Theoretical B(p)')
+        ax.set_title(name + "\nDiffusion B(p)", fontsize=10)
+        ax.set_xlabel("Momentum p", fontsize=10)
+        ax.set_ylabel("B(p)", fontsize=10)
+        ax.set_ylim(0, sigma**2)
+        ax.grid(True, alpha=0.3)
+        ax.legend(fontsize=8)
+        ax = axes[i, 2]
+        ax.plot(x_bin_centers, noise_x, 'mo-', label='Var(dx|x)')
+        ax.set_title(name + "\nSpatial Projection of Noise", fontsize=10)
+        ax.set_xlabel("Position x", fontsize=10)
+        ax.set_ylabel("Variance of dx", fontsize=10)
+        ax.set_ylim(bottom=0)
+        ax.grid(True, alpha=0.3)
+        ax.legend(fontsize=8)
+        q_th = 1.0 + (sigma**2 / gamma0)
+        alpha_th = 2.0 if q_th == 1.0 else (3.0 - q_th) / (q_th - 1.0)
+        alpha_th_capped = max(0.0, min(2.0, alpha_th))
+        alpha_emp = step1_results.get(name, {}).get('tail_alpha', np.nan)
+        q_emp_list = []
+        if name in step3_results:
+            for t_key, t_data in step3_results[name].items():
+                if t_data.get('q_index') is not None:
+                    q_emp_list.append(t_data['q_index'])
+        q_emp = np.mean(q_emp_list) if q_emp_list else np.nan
+        valid_noise = ~np.isnan(noise_x)
+        cv = np.nanstd(noise_x) / np.nanmean(noise_x) if np.sum(valid_noise) > 0 and np.nanmean(noise_x) > 0 else np.nan
+        results[name] = {'gamma0': float(gamma0), 'sigma': float(sigma), 'q_theoretical': float(q_th), 'alpha_theoretical': float(alpha_th), 'alpha_theoretical_capped': float(alpha_th_capped), 'q_empirical_pos': float(q_emp), 'alpha_empirical_tail': float(alpha_emp), 'spatial_noise_cv': float(cv)}
+    plt.tight_layout()
+    plot_filepath = os.path.join(data_dir, 'effective_operator_sisyphus_5_' + str(timestamp) + '.png')
+    plt.savefig(plot_filepath, dpi=300)
+    plt.close(fig)
+    with open(os.path.join(data_dir, 'effective_operator_results.json'), 'w') as f:
         json.dump(results, f, indent=4)
 
 if __name__ == '__main__':

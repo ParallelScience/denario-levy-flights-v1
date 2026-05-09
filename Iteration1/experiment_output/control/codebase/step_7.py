@@ -3,211 +3,140 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath("codebase"))
 sys.path.insert(0, "/home/node/data/compsep_data/")
-import pandas as pd
-import numpy as np
 import json
+import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
+import time
 
-def repel_labels(ax, x, y, labels, k=0.05, iterations=50):
-    pos = np.c_[x, y]
-    n = len(pos)
-    for _ in range(iterations):
-        for i in range(n):
-            for j in range(n):
-                if i != j:
-                    d = pos[i] - pos[j]
-                    dist = np.linalg.norm(d)
-                    if dist < k:
-                        force = d / (dist + 1e-5) * (k - dist) * 0.5
-                        pos[i] += force
-                        pos[j] -= force
-    for i in range(n):
-        ax.annotate(labels[i], (x[i], y[i]), xytext=(pos[i, 0], pos[i, 1]),
-                    textcoords='data', arrowprops=dict(arrowstyle="-", color='gray', lw=0.5),
-                    fontsize=8, alpha=0.8)
+def load_json_safe(filepath):
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as f:
+            return json.load(f)
+    return {}
 
-def main():
+if __name__ == '__main__':
     plt.rcParams['text.usetex'] = False
-    data_dir = 'data/'
-    crossover_file = os.path.join(data_dir, 'crossover_analysis.json')
-    crossover_data = {}
-    if os.path.exists(crossover_file):
-        with open(crossover_file, 'r') as f:
-            crossover_data = json.load(f)
-    kl_file = os.path.join(data_dir, 'kl_divergence_results.json')
-    kl_data = {}
-    if os.path.exists(kl_file):
-        with open(kl_file, 'r') as f:
-            kl_data = json.load(f)
-    ll_class_file = os.path.join(data_dir, 'levy_lorentz_classification.json')
-    ll_data = {}
-    if os.path.exists(ll_class_file):
-        with open(ll_class_file, 'r') as f:
-            ll_data = json.load(f)
-    sisyphus_file = os.path.join(data_dir, 'sisyphus_metrics.json')
-    sisyphus_data = {}
-    if os.path.exists(sisyphus_file):
-        with open(sisyphus_file, 'r') as f:
-            sisyphus_data = json.load(f)
-    dfa_file = os.path.join(data_dir, 'dfa_h_estimates.json')
-    dfa_data = {}
-    if os.path.exists(dfa_file):
-        with open(dfa_file, 'r') as f:
-            dfa_data = json.load(f)
-    rows = []
-    for filename in kl_data.keys():
-        H_val = np.nan
-        dfa_key = filename
-        if dfa_key not in dfa_data and dfa_key.replace('preprocessed_', '') in dfa_data:
-            dfa_key = dfa_key.replace('preprocessed_', '')
-        if dfa_key in dfa_data:
-            if isinstance(dfa_data[dfa_key], dict) and 'H' in dfa_data[dfa_key]:
-                H_val = dfa_data[dfa_key]['H']
-            elif isinstance(dfa_data[dfa_key], (float, int)):
-                H_val = dfa_data[dfa_key]
-        if np.isnan(H_val) and filename in crossover_data:
-            H_array = crossover_data[filename]['H']
-            if len(H_array) > 0:
-                H_val = np.mean(H_array[-5:])
-        alpha = kl_data[filename]['alpha']
-        kl_divs = [kl for kl in kl_data[filename]['kl_divergence'] if kl is not None]
-        kl_val = np.mean(kl_divs) if len(kl_divs) > 0 else np.nan
-        bp_ratio = np.nan
-        ll_key = filename
-        if ll_key not in ll_data and ll_key.replace('preprocessed_', '') in ll_data:
-            ll_key = ll_key.replace('preprocessed_', '')
-        if ll_key in ll_data:
-            ratios = [r for r in ll_data[ll_key]['core_to_peak_ratio'] if r is not None and not np.isinf(r)]
-            if len(ratios) > 0:
-                bp_ratio = np.mean(ratios)
-        q_index = np.nan
-        sis_key = filename
-        if sis_key not in sisyphus_data and sis_key.replace('preprocessed_', '') in sisyphus_data:
-            sis_key = sis_key.replace('preprocessed_', '')
-        if sis_key in sisyphus_data:
-            q_indices = sisyphus_data[sis_key]['q_index']
-            if len(q_indices) > 0:
-                q_index = np.mean(q_indices)
-        if 'levy_lorentz' in filename:
+    data_dir = 'data'
+    dfa_results = load_json_safe(os.path.join(data_dir, 'dfa_and_tail_results.json'))
+    crossover_results = load_json_safe(os.path.join(data_dir, 'crossover_results.json'))
+    core_tail_metrics = load_json_safe(os.path.join(data_dir, 'core_tail_metrics.json'))
+    ballistic_results = load_json_safe(os.path.join(data_dir, 'ballistic_classification_results.json'))
+    effective_operator = load_json_safe(os.path.join(data_dir, 'effective_operator_results.json'))
+    aggregated_data = {}
+    datasets = list(dfa_results.keys())
+    for name in datasets:
+        H = dfa_results[name].get('H', np.nan)
+        if H is None:
+            H = np.nan
+        alpha = dfa_results[name].get('tail_alpha', np.nan)
+        if alpha is None:
+            alpha = np.nan
+        kl_list = []
+        q_list = []
+        if name in core_tail_metrics:
+            for t_key, t_data in core_tail_metrics[name].items():
+                kl = t_data.get('kl_divergence')
+                if kl is not None and not np.isnan(kl):
+                    kl_list.append(kl)
+                q = t_data.get('q_index')
+                if q is not None and not np.isnan(q):
+                    q_list.append(q)
+        mean_kl = np.mean(kl_list) if kl_list else np.nan
+        fidelity_score = 1.0 - mean_kl if not np.isnan(mean_kl) else np.nan
+        peak_ratio = np.nan
+        if name in ballistic_results:
+            pr = ballistic_results[name].get('ratio_peak_to_core')
+            if pr is not None:
+                peak_ratio = pr
+        q_index = np.mean(q_list) if q_list else np.nan
+        if name in effective_operator:
+            qi = effective_operator[name].get('q_empirical_pos')
+            if qi is not None:
+                q_index = qi
+        if 'levy_lorentz' in name:
             theory = 'GME'
-        elif 'sisyphus' in filename:
+        elif 'sisyphus' in name:
             theory = 'Fractional Langevin'
-        elif 'ctrw' in filename:
+        elif 'ctrw' in name:
             theory = 'FFP'
-        elif 'pm_map' in filename:
-            theory = 'Deterministic Fractional Kinetics'
-        elif 'levy_stable' in filename:
+        elif 'pm_map' in name:
+            theory = 'Deterministic FFP'
+        elif 'levy_stable' in name:
             theory = 'FFP (Ground Truth)'
         else:
             theory = 'Unknown'
-        rows.append({'Mechanism': filename.replace('preprocessed_', '').replace('.npy', ''), 'H': H_val, 'alpha': alpha, 'KL_Divergence': kl_val, 'Ballistic_Peak_Ratio': bp_ratio, 'Tsallis_q_index': q_index, 'Effective_Theory': theory})
-    df = pd.DataFrame(rows)
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
-    pd.set_option('display.width', 200)
-    pd.set_option('display.float_format', '{:.4f}'.format)
-    print('Classification Matrix:')
-    print('-' * 150)
-    print(df.to_string(index=False))
-    print('-' * 150)
-    csv_path = os.path.join(data_dir, 'classification_matrix.csv')
-    df.to_csv(csv_path, index=False)
-    print('Classification matrix saved to ' + csv_path)
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    plot_df = df.dropna(subset=['H', 'alpha', 'KL_Divergence'])
-    theory_markers = {'GME': '^', 'Fractional Langevin': 's', 'FFP': 'o', 'Deterministic Fractional Kinetics': 'D', 'FFP (Ground Truth)': '*'}
-    fig = plt.figure(figsize=(18, 6))
-    ax1 = fig.add_subplot(131)
-    for theory, marker in theory_markers.items():
-        subset = plot_df[plot_df['Effective_Theory'] == theory]
-        if not subset.empty:
-            sc1 = ax1.scatter(subset['H'], subset['KL_Divergence'], c=subset['alpha'], cmap='viridis', s=100, edgecolor='k', marker=marker, label=theory, vmin=0.5, vmax=2.0)
-    ax1.set_xlabel('Hurst Exponent H')
-    ax1.set_ylabel('KL Divergence')
-    ax1.set_title('KL Divergence vs Hurst Exponent')
-    plt.colorbar(sc1, ax=ax1, label='Tail Index alpha')
-    ax1.legend(fontsize=8)
-    ax1.grid(True, linestyle='--', alpha=0.7)
-    ax2 = fig.add_subplot(132)
-    for theory, marker in theory_markers.items():
-        subset = plot_df[plot_df['Effective_Theory'] == theory]
-        if not subset.empty:
-            sc2 = ax2.scatter(subset['alpha'], subset['KL_Divergence'], c=subset['H'], cmap='plasma', s=100, edgecolor='k', marker=marker, label=theory, vmin=0.4, vmax=1.5)
-    ax2.set_xlabel('Tail Index alpha')
-    ax2.set_ylabel('KL Divergence')
-    ax2.set_title('KL Divergence vs Tail Index')
-    plt.colorbar(sc2, ax=ax2, label='Hurst Exponent H')
-    ax2.legend(fontsize=8)
-    ax2.grid(True, linestyle='--', alpha=0.7)
-    ax3 = fig.add_subplot(133)
-    x_vals, y_vals, labels = [], [], []
-    for theory, marker in theory_markers.items():
-        subset = plot_df[plot_df['Effective_Theory'] == theory]
-        if not subset.empty:
-            sc3 = ax3.scatter(subset['alpha'], subset['H'], c=subset['KL_Divergence'], cmap='coolwarm', s=100, edgecolor='k', marker=marker, label=theory, vmin=0, vmax=4)
-            for _, row in subset.iterrows():
-                name = row['Mechanism']
-                if 'pm_map' in name: short_name = 'PM ' + name.split('_')[-1]
-                elif 'ctrw' in name:
-                    if 'normal' in name and 'gaussian' in name: short_name = 'CTRW N-G'
-                    elif 'subdiff' in name and 'gaussian' in name: short_name = 'CTRW S-G'
-                    elif 'normal' in name and 'levy' in name: short_name = 'CTRW N-L'
-                    elif 'subdiff' in name and 'levy' in name: short_name = 'CTRW S-L'
-                    else: short_name = 'CTRW'
-                elif 'levy_lorentz' in name: short_name = 'LL ' + name.split('_')[-1]
-                elif 'sisyphus' in name: short_name = 'Sis ' + name.split('_')[1]
-                elif 'levy_stable' in name: short_name = 'Stable ' + name.split('_')[-1]
-                else: short_name = name
-                x_vals.append(row['alpha'])
-                y_vals.append(row['H'])
-                labels.append(short_name)
-    ax3.set_xlabel('Tail Index alpha')
-    ax3.set_ylabel('Hurst Exponent H')
-    ax3.set_title('Universality Classes (Color: KL Div)')
-    plt.colorbar(sc3, ax=ax3, label='KL Divergence')
-    ax3.legend(fontsize=8)
-    ax3.grid(True, linestyle='--', alpha=0.7)
-    repel_labels(ax3, np.array(x_vals), np.array(y_vals), labels, k=0.1, iterations=100)
+        aggregated_data[name] = {'H': float(H), 'alpha': float(alpha), 'mean_KL': float(mean_kl), 'fidelity_score': float(fidelity_score), 'ballistic_peak_ratio': float(peak_ratio), 'q_index': float(q_index), 'effective_theory': theory}
+    print('Levy Fidelity Scores (Ranked):')
+    print('-' * 80)
+    ranked_datasets = [(name, data['fidelity_score'], data['effective_theory']) for name, data in aggregated_data.items() if not np.isnan(data['fidelity_score'])]
+    ranked_datasets.sort(key=lambda x: x[1], reverse=True)
+    for rank, (name, score, theory) in enumerate(ranked_datasets, 1):
+        print(str(rank) + '. ' + name + ': ' + str(round(score, 4)) + ' (Theory: ' + theory + ')')
+    print('-' * 80)
+    print('\nAggregated Metrics per Mechanism (Classification Matrix):')
+    print('-' * 130)
+    header = 'Mechanism' + ' ' * 26 + ' | Theory' + ' ' * 14 + ' | H' + ' ' * 7 + ' | alpha' + ' ' * 3 + ' | KL Div' + ' ' * 2 + ' | Fidelity | Peak Ratio | q-index'
+    print(header)
+    print('-' * 130)
+    for name, data in aggregated_data.items():
+        h_str = str(round(data['H'], 3)) if not np.isnan(data['H']) else 'N/A'
+        alpha_str = str(round(data['alpha'], 3)) if not np.isnan(data['alpha']) else 'N/A'
+        kl_str = str(round(data['mean_KL'], 3)) if not np.isnan(data['mean_KL']) else 'N/A'
+        fid_str = str(round(data['fidelity_score'], 3)) if not np.isnan(data['fidelity_score']) else 'N/A'
+        peak_str = str(round(data['ballistic_peak_ratio'], 3)) if not np.isnan(data['ballistic_peak_ratio']) else 'N/A'
+        q_str = str(round(data['q_index'], 3)) if not np.isnan(data['q_index']) else 'N/A'
+        row = name.ljust(35) + ' | ' + data['effective_theory'].ljust(20) + ' | ' + h_str.ljust(8) + ' | ' + alpha_str.ljust(8) + ' | ' + kl_str.ljust(8) + ' | ' + fid_str.ljust(8) + ' | ' + peak_str.ljust(10) + ' | ' + q_str.ljust(8)
+        print(row)
+    print('-' * 130)
+    with open(os.path.join(data_dir, 'aggregated_mechanism_metrics.json'), 'w') as f:
+        json.dump(aggregated_data, f, indent=4)
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    names = []
+    alphas = []
+    Hs = []
+    KLs = []
+    theories = []
+    colors_map = {'GME': 'red', 'Fractional Langevin': 'blue', 'FFP': 'green', 'Deterministic FFP': 'orange', 'FFP (Ground Truth)': 'black'}
+    for name, data in aggregated_data.items():
+        if not np.isnan(data['mean_KL']) and not np.isnan(data['alpha']) and not np.isnan(data['H']):
+            names.append(name)
+            alphas.append(data['alpha'])
+            Hs.append(data['H'])
+            KLs.append(data['mean_KL'])
+            theories.append(data['effective_theory'])
+    for theory in set(theories):
+        idx = [i for i, t in enumerate(theories) if t == theory]
+        axes[0].scatter([alphas[i] for i in idx], [KLs[i] for i in idx], label=theory, color=colors_map.get(theory, 'gray'), s=100, alpha=0.7, edgecolors='k')
+    axes[0].set_xlabel('Tail Index alpha', fontsize=12)
+    axes[0].set_ylabel('Mean KL Divergence', fontsize=12)
+    axes[0].set_title('KL Divergence vs Tail Index', fontsize=14)
+    axes[0].legend(fontsize=10)
+    axes[0].grid(True, alpha=0.3)
+    for theory in set(theories):
+        idx = [i for i, t in enumerate(theories) if t == theory]
+        axes[1].scatter([Hs[i] for i in idx], [KLs[i] for i in idx], label=theory, color=colors_map.get(theory, 'gray'), s=100, alpha=0.7, edgecolors='k')
+    axes[1].set_xlabel('DFA Scaling Exponent H', fontsize=12)
+    axes[1].set_ylabel('Mean KL Divergence', fontsize=12)
+    axes[1].set_title('KL Divergence vs Scaling Exponent', fontsize=14)
+    axes[1].legend(fontsize=10)
+    axes[1].grid(True, alpha=0.3)
+    if len(alphas) > 0:
+        sc = axes[2].scatter(alphas, Hs, c=KLs, cmap='viridis_r', s=150, edgecolor='k', alpha=0.9)
+        cbar = plt.colorbar(sc, ax=axes[2])
+        cbar.set_label('Mean KL Divergence', fontsize=12)
+    axes[2].set_xlabel('Tail Index alpha', fontsize=12)
+    axes[2].set_ylabel('DFA Scaling Exponent H', fontsize=12)
+    axes[2].set_title('Universality Classes (H vs alpha)', fontsize=14)
+    axes[2].grid(True, alpha=0.3)
+    alpha_range = np.linspace(0.1, 2.0, 100)
+    H_levy = np.where(alpha_range < 2.0, 1.0 / alpha_range, 0.5)
+    axes[2].plot(alpha_range, H_levy, 'k--', alpha=0.5, label='Levy Flight (H = 1/alpha)')
+    axes[2].axhline(0.5, color='r', linestyle=':', alpha=0.5, label='Normal Diffusion (H=0.5)')
+    axes[2].axhline(1.0, color='b', linestyle=':', alpha=0.5, label='Ballistic (H=1.0)')
+    axes[2].legend(fontsize=10)
     plt.tight_layout()
-    plot_filename = 'universality_classes_summary_1_' + timestamp + '.png'
-    plot_path = os.path.join(data_dir, plot_filename)
-    plt.savefig(plot_path, dpi=300)
-    plt.close()
-    print('Summary plot saved to ' + plot_path)
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
-    for theory, marker in theory_markers.items():
-        subset = plot_df[plot_df['Effective_Theory'] == theory]
-        if not subset.empty:
-            sc = ax.scatter(subset['alpha'], subset['H'], subset['KL_Divergence'], c=subset['KL_Divergence'], cmap='coolwarm', s=100, edgecolor='k', marker=marker, label=theory, vmin=0, vmax=4)
-    ax.set_xlabel('Tail Index alpha')
-    ax.set_ylabel('Hurst Exponent H')
-    ax.set_zlabel('KL Divergence')
-    ax.set_title('3D Universality Mapping')
-    plt.colorbar(sc, ax=ax, label='KL Divergence', pad=0.1)
-    ax.legend(fontsize=8)
-    for i, row in plot_df.iterrows():
-        name = row['Mechanism']
-        if 'pm_map' in name: short_name = 'PM ' + name.split('_')[-1]
-        elif 'ctrw' in name:
-            if 'normal' in name and 'gaussian' in name: short_name = 'CTRW N-G'
-            elif 'subdiff' in name and 'gaussian' in name: short_name = 'CTRW S-G'
-            elif 'normal' in name and 'levy' in name: short_name = 'CTRW N-L'
-            elif 'subdiff' in name and 'levy' in name: short_name = 'CTRW S-L'
-            else: short_name = 'CTRW'
-        elif 'levy_lorentz' in name: short_name = 'LL ' + name.split('_')[-1]
-        elif 'sisyphus' in name: short_name = 'Sis ' + name.split('_')[1]
-        elif 'levy_stable' in name: short_name = 'Stable ' + name.split('_')[-1]
-        else: short_name = name
-        z_offset = np.random.uniform(-0.2, 0.2)
-        ax.text(row['alpha'], row['H'], row['KL_Divergence'] + z_offset, short_name, size=8, zorder=1, color='k')
-    plt.tight_layout()
-    plot_filename_3d = 'universality_classes_3d_2_' + timestamp + '.png'
-    plot_path_3d = os.path.join(data_dir, plot_filename_3d)
-    plt.savefig(plot_path_3d, dpi=300)
-    plt.close()
-    print('3D Summary plot saved to ' + plot_path_3d)
-
-if __name__ == '__main__':
-    main()
+    timestamp = int(time.time())
+    plot_filepath = os.path.join(data_dir, 'universality_classes_summary_7_' + str(timestamp) + '.png')
+    plt.savefig(plot_filepath, dpi=300)
+    print('\nSummary plot saved to ' + plot_filepath)
+    plt.close(fig)
