@@ -1,0 +1,110 @@
+{
+    "PM_z1.5": {
+        "alpha": 2.0,
+        "H": 0.4520398834696947,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 22.135339181332466
+    },
+    "PM_z2.0": {
+        "alpha": 2.0,
+        "H": 0.591038592283329,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 1.30350235043972
+    },
+    "PM_z2.5": {
+        "alpha": 2.0,
+        "H": 0.5565144756400988,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 1.243023346028579
+    },
+    "CTRW_norm_gauss": {
+        "alpha": 2.0,
+        "H": 0.5017645886303198,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.3160106597896144
+    },
+    "CTRW_sub_gauss": {
+        "alpha": 2.0,
+        "H": 0.5094442342321719,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 1.2261582646824056
+    },
+    "CTRW_norm_levy": {
+        "alpha": 2.0,
+        "H": 0.5260153528849051,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 3.570527440752761
+    },
+    "CTRW_sub_levy": {
+        "alpha": 2.0,
+        "H": 0.5390847568845186,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.07776879480921361
+    },
+    "Lorentz_a0.5": {
+        "alpha": 2.0,
+        "H": 0.7055887997809309,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 14.046379708062293
+    },
+    "Lorentz_a1.0": {
+        "alpha": 2.0,
+        "H": 0.9505954529925817,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.37278445472941213
+    },
+    "Lorentz_a1.5": {
+        "alpha": 2.0,
+        "H": 0.7906827438807144,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.4218649015704059
+    },
+    "Lorentz_a2.0": {
+        "alpha": 2.0,
+        "H": 0.6468079870066712,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.12863318896118597
+    },
+    "Sisyphus_strong": {
+        "alpha": 2.0,
+        "H": 0.641805952373316,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 1.72549980961318
+    },
+    "Sisyphus_mod": {
+        "alpha": 2.0,
+        "H": 1.3292954068084253,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 1.668058005197143
+    },
+    "Sisyphus_weak": {
+        "alpha": 2.0,
+        "H": 1.4805164400449036,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.4211304558745439
+    },
+    "Pure_a0.5": {
+        "alpha": 2.0,
+        "H": 0.5006041095430794,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 14.796098757821662
+    },
+    "Pure_a1.0": {
+        "alpha": 2.0,
+        "H": 0.5065660705454257,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 16.315515934784866
+    },
+    "Pure_a1.5": {
+        "alpha": 2.0,
+        "H": 0.5006549341307568,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 10.864795365945268
+    },
+    "Pure_a2.0": {
+        "alpha": 2.0,
+        "H": 0.4990290521010903,
+        "closest_pure": "Pure_a2.0",
+        "kl_divergence": 0.0
+    }
+}

@@ -1,0 +1,86 @@
+{
+    "sub_tasks": [
+        {
+            "bullet_points": [
+                "Load the Pomeau-Manneville (PM) map datasets (pm_map_z1p5.npy, pm_map_z2p0.npy, pm_map_z2p5.npy).",
+                "Implement Detrended Fluctuation Analysis (DFA) to compute the fluctuation function F(tau).",
+                "Extract the local scaling exponent H(tau) = d(log F)/d(log tau) for each dataset using a sliding window of fixed width in log-space (e.g., spanning half a decade) over consecutive DFA scale points.",
+                "Identify the crossover time tau_c where the system transitions from deterministic laminar behavior to the asymptotic Lévy-stable regime (where H(tau) stabilizes).",
+                "Compute the asymptotic (large-tau) Hurst exponent H_asymptotic for each z-value using a log-log linear regression over the stabilized tail of F(tau).",
+                "Plot H(tau) versus tau for each z value, clearly marking the crossover time tau_c.",
+                "Plot tau_c against the parameter z to determine the scaling law of the domain of validity.",
+                "Save the computed tau_c and H_asymptotic values to a JSON or NPZ file for use in later steps, and save all plots to {database_path}.",
+                "Print the numerical values of tau_c and H_asymptotic to the console."
+            ],
+            "sub_task": "Finite-Size Scaling of PM Map Intermittency",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Load the Lévy-Lorentz gas datasets, CTRW datasets, and the pure Lévy-stable reference datasets.",
+                "Compute the increments (step displacements) of the trajectories for all loaded datasets.",
+                "For a chosen set of evaluation times, fit a theoretical Lévy-stable distribution to the increments of the pure Lévy-stable reference data to obtain the baseline parameters.",
+                "Compute the log-likelihood of the empirical trajectory increments for the Lévy-Lorentz gas and CTRW models under the fitted pure Lévy-stable reference distribution.",
+                "Normalize the log-likelihoods by the number of independent trajectories and time points to ensure comparability across datasets of different lengths.",
+                "Calculate the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) for each model, using the number of free parameters as the penalty term.",
+                "Generate a bar plot comparing the normalized AIC and BIC across the different mechanisms and parameters.",
+                "Save the AIC/BIC results to a file and save the plots to {database_path}.",
+                "Print a detailed table of AIC, BIC, normalized log-likelihood, number of free parameters, and the fitted Lévy-stable alpha for each dataset to the console."
+            ],
+            "sub_task": "Information Complexity Analysis (Model Selection)",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Load the Sisyphus cooling datasets (sisyphus_strong_cooling.npy, moderate, weak).",
+                "Estimate the spatially dependent diffusion coefficient D(x) by analyzing the local variance of trajectory increments Delta x conditioned on the position x. Compute this by binning trajectories in position space using logarithmically spaced bins to ensure adequate sampling in the tails.",
+                "Fit the extracted D(x) to the generalized FFP model D(x) = D_0 |x|^-theta using a Maximum Likelihood Estimation (MLE) or weighted least squares approach.",
+                "Weight the residuals by the inverse of the empirical density 1/P(x,t) to prioritize tail accuracy, and exclude the immediate vicinity of the origin (x approx 0) to avoid numerical instabilities.",
+                "Validate the fitted exponent theta against the physical cooling strength gamma_0 provided in the metadata.",
+                "Plot the empirical D(x) versus |x| on a log-log scale, overlaying the fitted theoretical curves D_0 |x|^-theta and a theoretical prediction derived from the Tsallis/Lorentzian momentum distribution of the Sisyphus model (D_theory(x) proportional to the local momentum variance implied by the stationary distribution).",
+                "Save the fitted parameters (theta, D_0) and plots to {database_path}.",
+                "Print the bin centers, empirical D(x) values, and the fitted parameters theta and D_0 for each cooling strength to the console."
+            ],
+            "sub_task": "State-Dependent FFP Mapping for Sisyphus Cooling",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Load all datasets (PM map, CTRW, Lévy-Lorentz, Sisyphus, Pure Lévy).",
+                "Choose a fixed evaluation time t that is large enough to be in the asymptotic regime for each dataset (e.g., the last available time point or a fraction thereof).",
+                "Compute the empirical characteristic function phi(k, t) using the absolute value (modulus) of the empirical average of exp(i k x(t)) for a range of wavenumbers k at the chosen time t.",
+                "Plot the log of |phi(k,t)| against log|k| to make the power-law regime visually clear.",
+                "Fit the low-frequency (small k) regime of log|phi(k, t)| to the theoretical FFP form -D_alpha |k|^alpha t to extract the effective alpha and D_alpha.",
+                "Identify the break wavenumber k_break where the empirical |phi(k, t)| deviates from the theoretical FFP form by a defined threshold (e.g., 5% relative error).",
+                "Calculate the effective cutoff length l_eff approx 1/k_break.",
+                "Perform a bootstrapping procedure over the trajectories to estimate 95% confidence intervals for l_eff.",
+                "Save the extracted l_eff, confidence intervals, extracted alpha values, and plots to {database_path}.",
+                "Document the chosen evaluation time for each dataset and print the extracted parameters to the console."
+            ],
+            "sub_task": "Effective Cutoff Length Extraction",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Load all datasets, the previously computed asymptotic Hurst exponents H (from Step 1 for PM maps, and compute them via DFA or MSD for the other datasets), and the alpha values extracted in Step 4.",
+                "Normalize the empirical probability densities P(x, t) at various times by the scaling factor t^H (letting the scaled variable be xi = x / t^H).",
+                "Compute the Kullback-Leibler (KL) divergence between the scaled empirical densities of each mechanism and the pure Lévy-stable reference using Kernel Density Estimation (KDE) with cross-validated bandwidths.",
+                "Create a 2D scatter plot mapping each mechanism in a parameter space defined by the tail index alpha (extracted in Step 4) on the x-axis and the scaling exponent H on the y-axis. Use the marker color or size to represent the computed KL-divergence.",
+                "Save the KL-divergence results and the 2D parameter space plot to {database_path}."
+            ],
+            "sub_task": "Unified Scaling Framework Construction",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Review all generated plots, printed statistics, and saved results from Steps 1 to 5.",
+                "Synthesize the results to categorize the five physical mechanisms into universality classes based on their convergence to the standard FFP, modified FFP (state-dependent), or transient FFP.",
+                "Explicitly compare the AIC/BIC values from Step 2 with the KL-divergence values from Step 5 to check for consistency between the two model-selection criteria. Discuss any discrepancies as evidence for mechanisms that are statistically close to Lévy-stable but physically distinct.",
+                "Discuss the findings from the Information Complexity Analysis and the State-Dependent FFP Mapping to justify the selection of the minimal effective theory for anomalous diffusion.",
+                "Write the comprehensive Results section of the paper, including detailed interpretations of the plots, key statistics, and references to the generated figures. Ensure the report addresses the scientific goal of identifying the minimal effective physical theory underlying Lévy flights."
+            ],
+            "sub_task": "Universality Class Delineation and Final Synthesis",
+            "sub_task_agent": "researcher"
+        }
+    ]
+}
