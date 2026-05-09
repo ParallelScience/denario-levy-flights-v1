@@ -1,0 +1,74 @@
+{
+    "preprocessed_pm_map_z1p5.npy": {
+        "alpha_cf": 1.9918873279837805,
+        "D_alpha": 0.054816372729323604
+    },
+    "preprocessed_pm_map_z2p0.npy": {
+        "alpha_cf": 1.837089534736948,
+        "D_alpha": 0.23090334707526175
+    },
+    "preprocessed_pm_map_z2p5.npy": {
+        "alpha_cf": 1.8654789359935666,
+        "D_alpha": 0.3155040637875592
+    },
+    "preprocessed_ctrw_normal_wait_gaussian_jump.npy": {
+        "alpha_cf": 2.0402456768365056,
+        "D_alpha": 0.1991218301356953
+    },
+    "preprocessed_ctrw_subdiff_wait_gaussian_jump.npy": {
+        "alpha_cf": 1.9158204486224673,
+        "D_alpha": 0.025764599750897316
+    },
+    "preprocessed_ctrw_normal_wait_levy_jump.npy": {
+        "alpha_cf": 1.5136609652353339,
+        "D_alpha": 0.3297326311538541
+    },
+    "preprocessed_ctrw_subdiff_wait_levy_jump.npy": {
+        "alpha_cf": 1.4443366381510292,
+        "D_alpha": 0.0535106576878834
+    },
+    "preprocessed_levy_lorentz_alpha0p5.npy": {
+        "alpha_cf": 1.6631195383132489,
+        "D_alpha": 21.769911753612956
+    },
+    "preprocessed_levy_lorentz_alpha1p0.npy": {
+        "alpha_cf": 1.7474462433774498,
+        "D_alpha": 15.691664056895375
+    },
+    "preprocessed_levy_lorentz_alpha1p5.npy": {
+        "alpha_cf": 1.6350995384878342,
+        "D_alpha": 1.6369756480583073
+    },
+    "preprocessed_levy_lorentz_alpha2p0.npy": {
+        "alpha_cf": 1.885885206383976,
+        "D_alpha": 1.4405877021314997
+    },
+    "preprocessed_sisyphus_strong_cooling.npy": {
+        "alpha_cf": 2.0007451197037827,
+        "D_alpha": 0.050322831710013206
+    },
+    "preprocessed_sisyphus_moderate_cooling.npy": {
+        "alpha_cf": 1.2128989824845917,
+        "D_alpha": 1.0828225184785603
+    },
+    "preprocessed_sisyphus_weak_cooling.npy": {
+        "alpha_cf": 1.2662240191513598,
+        "D_alpha": 17.048762282616543
+    },
+    "preprocessed_levy_stable_alpha0p5.npy": {
+        "alpha_cf": 1.9519982603170514,
+        "D_alpha": 331114.68745072366
+    },
+    "preprocessed_levy_stable_alpha1p0.npy": {
+        "alpha_cf": 1.592367838864745,
+        "D_alpha": 99.50286486825918
+    },
+    "preprocessed_levy_stable_alpha1p5.npy": {
+        "alpha_cf": 1.5962175328073849,
+        "D_alpha": 1.4839270946356067
+    },
+    "preprocessed_levy_stable_alpha2p0.npy": {
+        "alpha_cf": 2.0097897652483536,
+        "D_alpha": 0.5623385278089127
+    }
+}

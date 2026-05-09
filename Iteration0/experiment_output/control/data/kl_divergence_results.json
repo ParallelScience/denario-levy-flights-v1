@@ -1,0 +1,218 @@
+[
+    {
+        "dataset": "preprocessed_pm_map_z1p5.npy",
+        "H": 0.487462727721722,
+        "best_ref_alpha": 1.5,
+        "min_kl": 0.19006851867404162,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.2885545288751876,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.2137796815693569,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.19006851867404162,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.21969387323601763
+        }
+    },
+    {
+        "dataset": "preprocessed_pm_map_z2p0.npy",
+        "H": 0.7219606187582722,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.18273875072556087,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.3794351272772245,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.30558909700297543,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.28345557804541044,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.18273875072556087
+        }
+    },
+    {
+        "dataset": "preprocessed_pm_map_z2p5.npy",
+        "H": 0.9160159904777972,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.22707831998154773,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.47122008506943563,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.40142940829006707,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.3610088316305527,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.22707831998154773
+        }
+    },
+    {
+        "dataset": "preprocessed_ctrw_normal_wait_gaussian_jump.npy",
+        "H": 0.5388703498560588,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.11425325951841646,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.28960640646850394,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.2063463693583328,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.18549859736449667,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.11425325951841646
+        }
+    },
+    {
+        "dataset": "preprocessed_ctrw_subdiff_wait_gaussian_jump.npy",
+        "H": 0.6867343492872893,
+        "best_ref_alpha": 1.0,
+        "min_kl": 0.21910969528660476,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.2870886088584494,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.21910969528660476,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.23646103731682766,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.649170592093644
+        }
+    },
+    {
+        "dataset": "preprocessed_ctrw_normal_wait_levy_jump.npy",
+        "H": 0.6959380603198456,
+        "best_ref_alpha": 1.0,
+        "min_kl": 0.4121882390136035,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.4124626222905096,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.4121882390136035,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.5731474497031656,
+            "preprocessed_levy_stable_alpha2p0.npy": 1.0476779364865332
+        }
+    },
+    {
+        "dataset": "preprocessed_ctrw_subdiff_wait_levy_jump.npy",
+        "H": 0.7856715769975162,
+        "best_ref_alpha": 0.5,
+        "min_kl": 0.3891795514642367,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.3891795514642367,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.45575821111170295,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.5371942160808759,
+            "preprocessed_levy_stable_alpha2p0.npy": 1.32356946156996
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_lorentz_alpha0p5.npy",
+        "H": 1.3780488695982922,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.44992336879457945,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.7211318183529181,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.6424708764454918,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.5960654135979578,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.44992336879457945
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_lorentz_alpha1p0.npy",
+        "H": 1.111118875692631,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.14756202321945358,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.29999383119367956,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.2019377549779667,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.1800269836708069,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.14756202321945358
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_lorentz_alpha1p5.npy",
+        "H": 0.7922723490191924,
+        "best_ref_alpha": 0.5,
+        "min_kl": 0.2966307254137743,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.2966307254137743,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.3010688053626605,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.3185777117714727,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.9081457840714474
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_lorentz_alpha2p0.npy",
+        "H": 0.6333540510919988,
+        "best_ref_alpha": 1.5,
+        "min_kl": 0.16808162426903464,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.25796479764496477,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.18822252353658322,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.16808162426903464,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.4518196542011362
+        }
+    },
+    {
+        "dataset": "preprocessed_sisyphus_strong_cooling.npy",
+        "H": 0.6475419568864262,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.1160304377076276,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.2897442191181115,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.20414959236160057,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.16288170620729292,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.1160304377076276
+        }
+    },
+    {
+        "dataset": "preprocessed_sisyphus_moderate_cooling.npy",
+        "H": 1.2814464118657396,
+        "best_ref_alpha": 0.5,
+        "min_kl": 0.6484223301345865,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.6484223301345865,
+            "preprocessed_levy_stable_alpha1p0.npy": 1.002477937017975,
+            "preprocessed_levy_stable_alpha1p5.npy": 1.1993024591388293,
+            "preprocessed_levy_stable_alpha2p0.npy": 1.9190100836246529
+        }
+    },
+    {
+        "dataset": "preprocessed_sisyphus_weak_cooling.npy",
+        "H": 1.4784815104489415,
+        "best_ref_alpha": 1.5,
+        "min_kl": 0.20749154139842543,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.28949146848431223,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.24365132717145443,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.20749154139842543,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.4169283817427078
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_stable_alpha0p5.npy",
+        "H": 0.6649398653488728,
+        "best_ref_alpha": 1.5,
+        "min_kl": 0.16941654316913257,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.2577838391425486,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.1859860954613728,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.16941654316913257,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.21122441432062242
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_stable_alpha1p0.npy",
+        "H": 0.8250927886900951,
+        "best_ref_alpha": 1.0,
+        "min_kl": 0.25246869691288815,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.2545624617360654,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.25246869691288815,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.2918482006357506,
+            "preprocessed_levy_stable_alpha2p0.npy": 1.051657797223877
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_stable_alpha1p5.npy",
+        "H": 0.6471443954423595,
+        "best_ref_alpha": 1.5,
+        "min_kl": 0.31323908951266266,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.31467233115286297,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.38780521458588435,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.31323908951266266,
+            "preprocessed_levy_stable_alpha2p0.npy": 1.1187932411635984
+        }
+    },
+    {
+        "dataset": "preprocessed_levy_stable_alpha2p0.npy",
+        "H": 0.49779736093935467,
+        "best_ref_alpha": 2.0,
+        "min_kl": 0.15958114017578814,
+        "kl_all": {
+            "preprocessed_levy_stable_alpha0p5.npy": 0.33508248139283364,
+            "preprocessed_levy_stable_alpha1p0.npy": 0.2510217329749083,
+            "preprocessed_levy_stable_alpha1p5.npy": 0.22930748333177584,
+            "preprocessed_levy_stable_alpha2p0.npy": 0.15958114017578814
+        }
+    }
+]

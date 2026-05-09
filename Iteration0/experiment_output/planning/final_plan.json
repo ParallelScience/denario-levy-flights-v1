@@ -1,0 +1,89 @@
+{
+    "sub_tasks": [
+        {
+            "bullet_points": [
+                "Load all trajectory files from the dataset.",
+                "Verify shapes and dtypes of the arrays.",
+                "Center trajectories at x(0)=0.",
+                "Remove PM map transients (first ~500 steps) to ensure intermittency statistics are not biased.",
+                "Save preprocessed arrays to the designated database path.",
+                "Print a summary of all dataset statistics (min, max, mean, std per dataset)."
+            ],
+            "sub_task": "Data Preprocessing and Integrity checks",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Implement Detrended Fluctuation Analysis (DFA) on all preprocessed trajectories across a range of window sizes.",
+                "Fit the fluctuation function F(n) ~ n^H via log-log linear regression to estimate the Hurst exponent H.",
+                "Produce a multi-panel plot of F(n) vs n for all mechanisms with fitted H values annotated.",
+                "Print a table of H estimates with confidence intervals."
+            ],
+            "sub_task": "Robust Scaling Analysis via DFA",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Compute step-increment distributions for multiple lag times tau for each dataset.",
+                "Estimate the tail index alpha via Maximum Likelihood Estimation (MLE) with the Hill estimator.",
+                "Perform KS-distance minimization to find the optimal lower bound x_min for the power-law fit.",
+                "Verify the stability of alpha across lag times to confirm convergence to a stable distribution.",
+                "Produce plots of the complementary CDF with power-law fits overlaid.",
+                "Print a table of alpha estimates per mechanism and lag time."
+            ],
+            "sub_task": "Tail Index Estimation and Stability",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Compute empirical characteristic functions phi(k,t) for each mechanism at multiple time points.",
+                "Apply smoothing or windowing at high-k frequencies to mitigate noise.",
+                "Fit the Levy-stable form exp(-D_alpha |k|^alpha t) to extract the generalized diffusion coefficient D_alpha and tail index alpha_cf.",
+                "Produce plots of log|phi(k,t)| vs log|k| with theoretical fits overlaid.",
+                "Print fitted parameters per mechanism."
+            ],
+            "sub_task": "Characteristic Function Analysis",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Normalize empirical probability density functions P(x,t) by the scaling factor t^(1/alpha) using the previously derived alpha.",
+                "Generate scaling collapse plots (t^(1/alpha) P(x,t) vs x/t^(1/alpha)) for all mechanisms compared to the pure Levy stable reference.",
+                "Compute the Kullback-Leibler (KL) divergence between each normalized mechanism PDF and the ground truth reference at multiple time points.",
+                "Print a table of KL divergence values."
+            ],
+            "sub_task": "Scaling Collapse and KL Divergence",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "For Sisyphus cooling, PM maps, and Levy-Lorentz gas, estimate local drift A(x) and diffusion coefficient B(x) from trajectory increments.",
+                "Test if residuals follow alpha-stable noise by fitting stable distribution parameters.",
+                "Produce plots of A(x) and B(x) vs x with theoretical predictions overlaid.",
+                "Print fitted Langevin parameters per mechanism."
+            ],
+            "sub_task": "Effective Langevin Parameterization",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Construct a 2D scatter plot of all mechanisms in the (H, KL-divergence) parameter space to identify clusters of universality.",
+                "Compute Bayesian Information Criterion (BIC) scores for each mechanism's fit to the Levy-stable model, penalizing by the number of free parameters.",
+                "Produce the universality map plot with mechanisms labeled.",
+                "Print a ranked table of BIC scores and parameter counts identifying the minimal effective theory candidate."
+            ],
+            "sub_task": "Universality Mapping and BIC Model Selection",
+            "sub_task_agent": "engineer"
+        },
+        {
+            "bullet_points": [
+                "Synthesize all quantitative outputs (H values, alpha estimates from MLE and characteristic functions, KL divergences, BIC scores, universality map clusters) into a complete Results section of the paper.",
+                "Interpret each mechanism's convergence to Levy-stable statistics.",
+                "Discuss the universality classes identified.",
+                "Conclude which mechanism constitutes the minimal effective physical theory with explicit reference to all generated plots and numerical tables."
+            ],
+            "sub_task": "Results Section Writing",
+            "sub_task_agent": "researcher"
+        }
+    ]
+}
