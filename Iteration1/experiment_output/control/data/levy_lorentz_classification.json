@@ -1,0 +1,134 @@
+{
+    "preprocessed_levy_lorentz_alpha0p5.npy": {
+        "alpha": 0.5,
+        "time_points": [
+            200.4008026123047,
+            501.00201416015625,
+            1002.0040283203125,
+            2000.0
+        ],
+        "core_density": [
+            0.0008316666835869686,
+            0.0009980020466838848,
+            0.00016633367444731414,
+            8.333333333333333e-05
+        ],
+        "peak_density": [
+            0.010811666886630593,
+            0.0029939939817992065,
+            0.0014969969908996033,
+            0.0011666666666666668
+        ],
+        "core_to_peak_ratio": [
+            0.07692307692307691,
+            0.33333468696024127,
+            0.11111156232008043,
+            0.07142857142857142
+        ],
+        "classification": [
+            "GME (Levy walk)",
+            "GME (Levy walk)",
+            "GME (Levy walk)",
+            "GME (Levy walk)"
+        ]
+    },
+    "preprocessed_levy_lorentz_alpha1p0.npy": {
+        "alpha": 1.0,
+        "time_points": [
+            200.4008026123047,
+            501.00201416015625,
+            1002.0040283203125,
+            2000.0
+        ],
+        "core_density": [
+            0.0016633333671739372,
+            0.0009980020466838848,
+            0.0006653346977892566,
+            0.0005833333333333334
+        ],
+        "peak_density": [
+            0.002495000050760906,
+            0.0009980020466838848,
+            0.00016633367444731414,
+            0.00025
+        ],
+        "core_to_peak_ratio": [
+            0.6666666666666666,
+            1.0,
+            4.0,
+            2.3333333333333335
+        ],
+        "classification": [
+            "GME (Levy walk)",
+            "GME (Levy walk)",
+            "FFP (Levy flight)",
+            "GME (Levy walk)"
+        ]
+    },
+    "preprocessed_levy_lorentz_alpha1p5.npy": {
+        "alpha": 1.5,
+        "time_points": [
+            200.4008026123047,
+            501.00201416015625,
+            1002.0040283203125,
+            2000.0
+        ],
+        "core_density": [
+            0.004990000101521812,
+            0.006653346977892566,
+            0.0029940061400516543,
+            0.00125
+        ],
+        "peak_density": [
+            0.0,
+            0.0,
+            0.0,
+            8.333333333333333e-05
+        ],
+        "core_to_peak_ratio": [
+            Infinity,
+            Infinity,
+            Infinity,
+            15.0
+        ],
+        "classification": [
+            "FFP (Levy flight)",
+            "FFP (Levy flight)",
+            "FFP (Levy flight)",
+            "FFP (Levy flight)"
+        ]
+    },
+    "preprocessed_levy_lorentz_alpha2p0.npy": {
+        "alpha": 2.0,
+        "time_points": [
+            200.4008026123047,
+            501.00201416015625,
+            1002.0040283203125,
+            2000.0
+        ],
+        "core_density": [
+            0.009148333519456655,
+            0.006653346977892566,
+            0.006487013303445251,
+            0.003416666666666667
+        ],
+        "peak_density": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "core_to_peak_ratio": [
+            Infinity,
+            Infinity,
+            Infinity,
+            Infinity
+        ],
+        "classification": [
+            "FFP (Levy flight)",
+            "FFP (Levy flight)",
+            "FFP (Levy flight)",
+            "FFP (Levy flight)"
+        ]
+    }
+}
