@@ -1,0 +1,7 @@
+The observed failures and ambiguities in the analysis are directly attributable to constraints described in the dataset:
+
+1. **Pomeau-Manneville (PM) Map Limitations**: The analysis reports a lack of clear crossover to a stable anomalous regime for $z=1.5$ and $z=2.5$. This is explained by the dataset description, which notes that these trajectories are deterministic and finite-length (5001 steps), leading to "periodic nature" and "finite-time cutoffs" that prevent convergence to a smooth Lévy-stable propagator.
+
+2. **Sisyphus Cooling Deviations**: The analysis identifies that Sisyphus cooling produces non-extensive Tsallis statistics rather than FFP-governed Lévy statistics. This is consistent with the dataset description, which defines the mechanism as Langevin dynamics with "velocity-dependent (non-linear) friction," a physical constraint that inherently couples momentum to noise, violating the assumptions of the homogeneous fractional diffusion equation.
+
+3. **Lévy-Lorentz Gas Crossover**: The analysis notes a persistent ballistic front for $\alpha=0.5$ and a rapid crossover for $\alpha=1.5$. This is directly explained by the dataset's description of the mechanism as "ballistic transport... at constant speed v=1," where the structural parameter $\alpha$ dictates the frequency of scatterers, thereby controlling the duration of the ballistic regime before the emergence of anomalous diffusion.
