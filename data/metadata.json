@@ -1,0 +1,99 @@
+{
+  "n_trajectories": 200,
+  "n_steps": 5000,
+  "dt": 1.0,
+  "mechanisms": {
+    "pm_map": {
+      "description": "Pomeau-Manneville type-I intermittency map",
+      "files": [
+        "pm_map_z1p5.npy",
+        "pm_map_z2p0.npy",
+        "pm_map_z2p5.npy"
+      ],
+      "z_values": [
+        1.5,
+        2.0,
+        2.5
+      ],
+      "expected_alpha": [
+        2.0,
+        1.0,
+        0.67
+      ],
+      "shape": [
+        200,
+        5001
+      ]
+    },
+    "ctrw": {
+      "description": "Continuous-Time Random Walk with power-law waiting times and/or L\u00e9vy jumps",
+      "files": [
+        "ctrw_normal_wait_gaussian_jump.npy",
+        "ctrw_subdiff_wait_gaussian_jump.npy",
+        "ctrw_normal_wait_levy_jump.npy",
+        "ctrw_subdiff_wait_levy_jump.npy"
+      ],
+      "time_grid": "ctrw_tgrid.npy",
+      "shape": [
+        200,
+        500
+      ]
+    },
+    "levy_lorentz": {
+      "description": "L\u00e9vy-Lorentz gas: 1D ballistic transport between power-law spaced scatterers",
+      "files": [
+        "levy_lorentz_alpha0p5.npy",
+        "levy_lorentz_alpha1p0.npy",
+        "levy_lorentz_alpha1p5.npy",
+        "levy_lorentz_alpha2p0.npy"
+      ],
+      "time_grid": "levy_lorentz_tgrid.npy",
+      "alpha_values": [
+        0.5,
+        1.0,
+        1.5,
+        2.0
+      ],
+      "shape": [
+        200,
+        500
+      ]
+    },
+    "sisyphus": {
+      "description": "Sisyphus cooling analogue: Langevin with velocity-dependent friction",
+      "files": [
+        "sisyphus_strong_cooling.npy",
+        "sisyphus_moderate_cooling.npy",
+        "sisyphus_weak_cooling.npy"
+      ],
+      "gamma0_values": [
+        5.0,
+        1.0,
+        0.2
+      ],
+      "shape": [
+        200,
+        5001
+      ]
+    },
+    "levy_stable": {
+      "description": "Pure alpha-stable L\u00e9vy process (ground truth reference)",
+      "files": [
+        "levy_stable_alpha0p5.npy",
+        "levy_stable_alpha1p0.npy",
+        "levy_stable_alpha1p5.npy",
+        "levy_stable_alpha2p0.npy"
+      ],
+      "alpha_values": [
+        0.5,
+        1.0,
+        1.5,
+        2.0
+      ],
+      "shape": [
+        200,
+        5001
+      ]
+    }
+  }
+}

@@ -1,0 +1,1162 @@
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: You are a Senior Scientific Researcher.
+**Objective**: Based on the provided dataset description and potential previous ideas, generate 10 distinct, high-impact research ideas for a scientific project. 
+
+**Task**: 
+Generate 10 research ideas that could lead to meaningful scientific discovery. These ideas must be diverse in their approach to the data and must be different to previous existing ideas.
+
+**Operational Constraints**:
+- We are trying to sample the ideas space as widely as possible. Thus, if there are existing ideas, make the 10 ideas as different as possible from the existing ones.
+- The 10 ideas should also be as different from each other as possible.
+- **Conciseness**: Each idea should be 3-4 sentences max. Focus on the "Research Question," not the execution.
+- **No Methodology**: Do not include plans, code, or specific algorithms. Only state the *Research Objective*.
+- **Consistency**: The ideas must strictly adhere to the constraints and physical reality described in the data description.
+- **Zero Redundancy**: If two ideas feel similar, discard one and find a new scientific angle.
+- Each idea must consist of a title and a brief description of it.
+
+Data description:
+
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+
+
+
+
+
+
+
+Respond in the following format:
+
+\\begin{IDEAS}
+<IDEAS>
+\\end{IDEAS}
+
+In <IDEAS>, put the ideas you have generated. 
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{IDEAS}
+1. **Information-Theoretic Complexity of Anomalous Diffusion**
+Quantify the structural complexity of trajectories using permutation entropy and Lempel-Ziv compression. The objective is to determine if deterministic mechanisms (PM Map) exhibit distinct information-theoretic signatures compared to stochastic models (CTRW/Lévy-Stable) despite sharing identical tail exponents.
+
+2. **Phase Transition in Exit-Time Statistics**
+Investigate the distribution of first-passage times across a fixed spatial threshold for all datasets. The goal is to identify if the "memory" of the underlying mechanism manifests as a universal scaling law in exit-time distributions, effectively distinguishing between long-range correlations and independent Lévy increments.
+
+3. **Spectral Geometry of Trajectory Fluctuations**
+Analyze the power spectral density (PSD) of the position fluctuations to extract the scaling of the noise color. The objective is to determine whether the transition from Gaussian to Lévy statistics is characterized by a universal shift in the spectral slope, potentially identifying a "spectral fingerprint" for the fractional Laplacian operator.
+
+4. **Non-Equilibrium Entropy Production Rates**
+Calculate the path-dependent entropy production for each mechanism to characterize their distance from equilibrium. This study aims to differentiate between energy-conserving geometric models (Lévy-Lorentz) and dissipative cooling models (Sisyphus) through their unique thermodynamic breaking of time-reversal symmetry.
+
+5. **Multi-Scale Self-Similarity and Wavelet Analysis**
+Apply continuous wavelet transforms to detect discontinuities in trajectory derivatives. The objective is to determine whether the "Lévy-like" behavior arises from discrete, singular jumps or from a continuous cascade of intermittent fluctuations across spatial scales.
+
+6. **Sensitivity to Initial Conditions in Stochastic Environments**
+Measure the Lyapunov exponents for the deterministic PM maps and contrast them with the "effective" divergence rates in the stochastic models. The objective is to map how microscopic chaos translates into macroscopic anomalous diffusion, testing if deterministic intermittency can be effectively mapped to a specific stochastic noise term.
+
+7. **Finite-Size Scaling of the Fractional Fokker-Planck Propagator**
+Examine how the convergence toward the fractional diffusion limit depends on the temporal window length. This research seeks to identify the "crossover time" at which different microscopic mechanisms collapse onto the universal Lévy-stable propagator, revealing the hierarchy of effective theories.
+
+8. **Topological Persistence of Trajectory Clusters**
+Utilize persistent homology to analyze the "shape" of trajectory ensembles in phase space. The objective is to identify robust topological features that persist across different physical mechanisms, providing a coordinate-invariant way to categorize anomalous diffusion processes beyond mere tail-fitting.
+
+9. **Heavy-Tail Truncation and Large Deviation Principles**
+Analyze the rate function of the large deviation principle for the displacement distributions. This study aims to determine the extent to which physical constraints (e.g., finite velocity in Lorentz gas) induce non-asymptotic corrections to the pure Lévy-stable limit, defining the boundaries of the "effective" theory.
+
+10. **Coupling Strength and Memory Kernels**
+Derive the generalized memory kernel for each system via the Mori-Zwanzig formalism. The objective is to classify the "minimal model" by identifying whether the memory effect is purely temporal (waiting times in CTRW) or spatial (scattering geometry in Lorentz gas), providing a functional classification of anomalous transport.
+\end{IDEAS}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Senior Scientific Lead and Final Decision Maker.
+**Objective**: Review the ideas prioritized by the three independent Reviewer Agents and select the single most promising research project to proceed to the implementation phase.
+
+**Context**: 
+A pool of 10 initial ideas was generated. Three independent agents have evaluated those ideas and identified their top selections (provided below). Your role is to serve as the final filter, selecting the "Best of the Best" based on scientific merit and the constraints of the dataset.
+
+**Evaluation Criteria**:
+1. **Scientific Consensus**: Does an idea appear as a top choice for multiple reviewers?
+2. **Execution Readiness**: Given the 'Data Description,' which idea is most likely to produce a valid, non-erroneous scientific result?
+3. **Strategic Impact**: Which project offers the most meaningful contribution to the Foundation's research goals?
+4. **Novelty vs Previous Work**: The selected idea should be as different as possible from any previous ideas to ensure new scientific contributions.
+
+**Operational Constraints**:
+- **Selection Only**: You must select exactly one idea.
+- **Strict Fidelity**: Do not modify, rephrase, or correct the original text of the idea. 
+- **Zero Commentary**: Do not justify your decision, provide pros/cons, or offer any introductory text.
+- **Output Integrity**: Provide **only** the text of the selected idea within the required tags.
+- The selected idea must contain a title and a description of the idea
+
+Data description:
+
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+
+Ideas:
+Idea selected1: 10. **Coupling Strength and Memory Kernels**
+Derive the generalized memory kernel for each system via the Mori-Zwanzig formalism. The objective is to classify the "minimal model" by identifying whether the memory effect is purely temporal (waiting times in CTRW) or spatial (scattering geometry in Lorentz gas), providing a functional classification of anomalous transport.
+Idea selected2: 10. **Coupling Strength and Memory Kernels**
+Derive the generalized memory kernel for each system via the Mori-Zwanzig formalism. The objective is to classify the "minimal model" by identifying whether the memory effect is purely temporal (waiting times in CTRW) or spatial (scattering geometry in Lorentz gas), providing a functional classification of anomalous transport.
+Idea selected3: 10. **Coupling Strength and Memory Kernels**
+Derive the generalized memory kernel for each system via the Mori-Zwanzig formalism. The objective is to classify the "minimal model" by identifying whether the memory effect is purely temporal (waiting times in CTRW) or spatial (scattering geometry in Lorentz gas), providing a functional classification of anomalous transport.
+
+
+
+
+
+
+
+Respond in exactly the following format:
+
+\\begin{IDEA}
+<IDEA>
+\\end{IDEA}
+
+In <IDEA>, put the idea you have selected
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{IDEA}
+10. **Coupling Strength and Memory Kernels**
+Derive the generalized memory kernel for each system via the Mori-Zwanzig formalism. The objective is to classify the "minimal model" by identifying whether the memory effect is purely temporal (waiting times in CTRW) or spatial (scattering geometry in Lorentz gas), providing a functional classification of anomalous transport.
+\end{IDEA}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Skeptical Red Team Reviewer and Scientific Auditor.
+**Objective**: Conduct a rigorous "Stress Test" on the proposed research idea to identify fatal flaws, feasibility gaps, and potential scientific "slop."
+
+**Evaluation Criteria**:
+1. **Data-Hypothesis Alignment**: Does the dataset described actually contain the variables and precision required to test this idea?
+2. **Feasibility & Noise**: Is the signal-to-noise ratio realistic? Is the idea too ambitious for the provided data?
+3. **Redundancy Check**: Does this idea simply repeat a "standard" analysis, or is it a meaningful contribution?
+4. **Physical Reality**: Does the idea violate any constraints or physical laws mentioned in the data description?
+
+**Task**:
+- Critically analyze the "Current Idea" against the "Data Description."
+- If the idea is **unfeasible**, explicitly state why and suggest a "Strategic Pivot" (a new direction that *is* supported by the data).
+- If the idea is **feasible but weak**, identify the specific "weak links" in the logic.
+- Compare it against "Previous Ideas" to ensure the refinement loop is moving forward, not backward.
+
+**Operational Constraints**:
+- **Tone**: Be professional, objective, and intellectually demanding. 
+- **Brevity**: Use high-density bullet points. Do not waste words on pleasantries.
+- **Strict Adherence**: Every criticism must be grounded in the provided 'Data Description.'
+
+**Input Data**:
+- **Data Description**: 
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+- **Current Idea**: 10. **Coupling Strength and Memory Kernels**
+Derive the generalized memory kernel for each system via the Mori-Zwanzig formalism. The objective is to classify the "minimal model" by identifying whether the memory effect is purely temporal (waiting times in CTRW) or spatial (scattering geometry in Lorentz gas), providing a functional classification of anomalous transport.    
+
+Respond in the following format:
+
+\\begin{CRITIC}
+<CRITIC>
+\\end{CRITIC}
+
+In <CRITIC>, put your criticism to the idea. Try to be brief in the description.
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{CRITIC}
+*   **Data-Hypothesis Mismatch**: The Mori-Zwanzig (MZ) formalism requires access to the full phase-space dynamics (position *and* momentum/velocity) to construct the projection operator and the memory kernel. The provided dataset consists almost exclusively of position trajectories $X(t)$. Without velocity/momentum data for the PM map, CTRW, and Lorentz gas, the projection onto the slow variable $X(t)$ is ill-defined and the memory kernel cannot be rigorously derived.
+*   **Feasibility & Noise**: Estimating memory kernels from finite, noisy, discrete-time trajectories (especially $N=200$ per class) is notoriously unstable. The "memory" in these systems is often non-Markovian by construction (e.g., CTRW waiting times); attempting to extract a kernel from $X(t)$ alone will likely result in "slop"—numerical artifacts masquerading as physical memory effects.
+*   **Redundancy Check**: The proposal ignores the "Fractional Fokker-Planck" (FFP) signature analysis already suggested in the metadata. The FFP approach is the standard, mathematically robust way to handle non-local/non-Markovian effects in these specific systems without the computational overhead and instability of the MZ formalism.
+*   **Strategic Pivot**: Abandon the Mori-Zwanzig approach. Instead, perform a **"Scaling Collapse of the Propagator"** analysis. Compute the probability density function $P(x, t)$ for each mechanism and test for the scaling form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$. This directly tests the "minimal model" hypothesis by determining if the coarse-grained limit of each mechanism converges to the same Lévy-stable attractor, which is the fundamental requirement for a unified effective theory.
+\end{CRITIC}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Senior Research Scientific.
+**Objective**: Synthesize a primary research idea with expert criticism to produce a refined, groundbreaking, and technically feasible scientific objective.
+
+**Task**:
+You are in an iterative refinement loop (Iteration: 0). Your goal is to take the "Previous Idea," pass it through the filter of the "Critiques," and produce a "Hardened Idea" that is more scientifically rigorous and original than its predecessor.
+
+**Refinement Principles**:
+1. **Address Caveats**: If the critic mentioned a lack of feasibility, adjust the scope of the idea to fit the 'Data Description.'
+2. **Increase Specificity**: Move away from generic goals. Use the statistics and variables found in the data description to make the idea more concrete.
+3. **Internalize Feedback**: Do not explicitly mention the criticism or explain your changes. Instead, weave the solutions directly into the new version of the idea.
+4. **Maintain Grounding**: Ensure the "groundbreaking" aspect remains physically possible within the provided dataset's constraints.
+
+**Operational Constraints**:
+- **Brevity**: Keep the description concise but high-density (max 6 sentences).
+- **Format**: Do not include introductory text or meta-commentary about the process.
+- **Fidelity**: Stick strictly to the guidelines and physical realities described in the data description.
+- The idea must contain a title and a description of the idea
+
+**Input Data**:
+- **Data Description**: 
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+- **Critical Feedback**: *   **Data-Hypothesis Mismatch**: The Mori-Zwanzig (MZ) formalism requires access to the full phase-space dynamics (position *and* momentum/velocity) to construct the projection operator and the memory kernel. The provided dataset consists almost exclusively of position trajectories $X(t)$. Without velocity/momentum data for the PM map, CTRW, and Lorentz gas, the projection onto the slow variable $X(t)$ is ill-defined and the memory kernel cannot be rigorously derived.
+*   **Feasibility & Noise**: Estimating memory kernels from finite, noisy, discrete-time trajectories (especially $N=200$ per class) is notoriously unstable. The "memory" in these systems is often non-Markovian by construction (e.g., CTRW waiting times); attempting to extract a kernel from $X(t)$ alone will likely result in "slop"—numerical artifacts masquerading as physical memory effects.
+*   **Redundancy Check**: The proposal ignores the "Fractional Fokker-Planck" (FFP) signature analysis already suggested in the metadata. The FFP approach is the standard, mathematically robust way to handle non-local/non-Markovian effects in these specific systems without the computational overhead and instability of the MZ formalism.
+*   **Strategic Pivot**: Abandon the Mori-Zwanzig approach. Instead, perform a **"Scaling Collapse of the Propagator"** analysis. Compute the probability density function $P(x, t)$ for each mechanism and test for the scaling form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$. This directly tests the "minimal model" hypothesis by determining if the coarse-grained limit of each mechanism converges to the same Lévy-stable attractor, which is the fundamental requirement for a unified effective theory.
+
+Respond in the following format:
+
+\\begin{IDEA}
+<IDEA>
+\\end{IDEA}
+
+In <IDEA>, put the refined idea. 
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{IDEA}
+**Title: Universal Scaling Attractors in Anomalous Diffusion: A Comparative Propagator Analysis**
+
+This study establishes a unified effective theory by testing the convergence of disparate microscopic mechanisms—Pomeau-Manneville intermittency, CTRW, Lévy-Lorentz gas, and Sisyphus cooling—toward a common Lévy-stable attractor. For each mechanism, we will compute the empirical probability density function $P(x, t)$ and perform a scaling collapse onto the self-similar form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$, where $\mathcal{L}_\alpha$ is the Lévy-stable PDF. By systematically varying the control parameters (e.g., $z$ in PM maps, $\alpha$ in Lorentz gas, and $\gamma_0$ in Sisyphus cooling), we will quantify the "attraction strength" of each system toward the fractional Fokker-Planck limit. We will evaluate the fidelity of this convergence by measuring the deviation of the characteristic function $\phi(k, t)$ from the theoretical exponential decay $\exp(-D_\alpha |k|^\alpha t)$. This approach identifies which physical mechanisms possess the minimal parameter set required to replicate genuine Lévy-stable statistics, effectively mapping the universality classes of anomalous diffusion within the provided synthetic trajectory space.
+\end{IDEA}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Skeptical Red Team Reviewer and Scientific Auditor.
+**Objective**: Conduct a rigorous "Stress Test" on the proposed research idea to identify fatal flaws, feasibility gaps, and potential scientific "slop."
+
+**Evaluation Criteria**:
+1. **Data-Hypothesis Alignment**: Does the dataset described actually contain the variables and precision required to test this idea?
+2. **Feasibility & Noise**: Is the signal-to-noise ratio realistic? Is the idea too ambitious for the provided data?
+3. **Redundancy Check**: Does this idea simply repeat a "standard" analysis, or is it a meaningful contribution?
+4. **Physical Reality**: Does the idea violate any constraints or physical laws mentioned in the data description?
+
+**Task**:
+- Critically analyze the "Current Idea" against the "Data Description."
+- If the idea is **unfeasible**, explicitly state why and suggest a "Strategic Pivot" (a new direction that *is* supported by the data).
+- If the idea is **feasible but weak**, identify the specific "weak links" in the logic.
+- Compare it against "Previous Ideas" to ensure the refinement loop is moving forward, not backward.
+
+**Operational Constraints**:
+- **Tone**: Be professional, objective, and intellectually demanding. 
+- **Brevity**: Use high-density bullet points. Do not waste words on pleasantries.
+- **Strict Adherence**: Every criticism must be grounded in the provided 'Data Description.'
+
+**Input Data**:
+- **Data Description**: 
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+- **Current Idea**: **Title: Universal Scaling Attractors in Anomalous Diffusion: A Comparative Propagator Analysis**
+
+This study establishes a unified effective theory by testing the convergence of disparate microscopic mechanisms—Pomeau-Manneville intermittency, CTRW, Lévy-Lorentz gas, and Sisyphus cooling—toward a common Lévy-stable attractor. For each mechanism, we will compute the empirical probability density function $P(x, t)$ and perform a scaling collapse onto the self-similar form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$, where $\mathcal{L}_\alpha$ is the Lévy-stable PDF. By systematically varying the control parameters (e.g., $z$ in PM maps, $\alpha$ in Lorentz gas, and $\gamma_0$ in Sisyphus cooling), we will quantify the "attraction strength" of each system toward the fractional Fokker-Planck limit. We will evaluate the fidelity of this convergence by measuring the deviation of the characteristic function $\phi(k, t)$ from the theoretical exponential decay $\exp(-D_\alpha |k|^\alpha t)$. This approach identifies which physical mechanisms possess the minimal parameter set required to replicate genuine Lévy-stable statistics, effectively mapping the universality classes of anomalous diffusion within the provided synthetic trajectory space.
+- **Previous Versions (for context)**: 
+
+
+Iteration 0:
+Idea: **Title: Universal Scaling Attractors in Anomalous Diffusion: A Comparative Propagator Analysis**
+
+This study establishes a unified effective theory by testing the convergence of disparate microscopic mechanisms—Pomeau-Manneville intermittency, CTRW, Lévy-Lorentz gas, and Sisyphus cooling—toward a common Lévy-stable attractor. For each mechanism, we will compute the empirical probability density function $P(x, t)$ and perform a scaling collapse onto the self-similar form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$, where $\mathcal{L}_\alpha$ is the Lévy-stable PDF. By systematically varying the control parameters (e.g., $z$ in PM maps, $\alpha$ in Lorentz gas, and $\gamma_0$ in Sisyphus cooling), we will quantify the "attraction strength" of each system toward the fractional Fokker-Planck limit. We will evaluate the fidelity of this convergence by measuring the deviation of the characteristic function $\phi(k, t)$ from the theoretical exponential decay $\exp(-D_\alpha |k|^\alpha t)$. This approach identifies which physical mechanisms possess the minimal parameter set required to replicate genuine Lévy-stable statistics, effectively mapping the universality classes of anomalous diffusion within the provided synthetic trajectory space.
+    
+
+Respond in the following format:
+
+\\begin{CRITIC}
+<CRITIC>
+\\end{CRITIC}
+
+In <CRITIC>, put your criticism to the idea. Try to be brief in the description.
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{CRITIC}
+*   **Data-Hypothesis Mismatch**: The proposed "scaling collapse" assumes a single self-similar attractor. However, the dataset includes mechanisms (e.g., PM maps, Sisyphus cooling) that are inherently non-stationary or possess finite-time correlations that deviate from the fractional Fokker-Planck (FFP) limit. You lack the temporal resolution (only 500-5000 steps) to distinguish between true asymptotic convergence and transient pre-asymptotic behavior.
+*   **Feasibility Gap**: Estimating the characteristic function $\phi(k, t)$ from only 200 trajectories is statistically ill-posed. The high-frequency components of the Fourier transform will be dominated by sampling noise, rendering the "deviation from exponential decay" metric unreliable for identifying universality classes.
+*   **Redundancy/Slop**: The "attraction strength" metric is ill-defined. Without a rigorous definition of the distance metric between the empirical PDF and the Lévy-stable PDF (e.g., Kullback-Leibler divergence or Wasserstein distance), this is qualitative hand-waving rather than a quantitative physical theory.
+*   **Strategic Pivot**: Abandon the "universal attractor" search. Instead, perform a **Finite-Time Scaling Analysis**. Map the effective Hurst exponent $H(t)$ and the tail index $\alpha(t)$ as a function of time. Use the 200 trajectories to calculate the *rate of convergence* to the Lévy-stable limit. This identifies which mechanisms are "fast" vs. "slow" to reach the FFP regime, providing a more robust classification than a binary "is it a Lévy flight" test.
+*   **Weak Link**: The assumption that all mechanisms converge to the same $\mathcal{L}_\alpha$ ignores the fundamental difference between *jump-based* (CTRW/Lorentz) and *velocity-based* (Sisyphus) mechanisms. The latter may never reach the FFP limit due to the coupling between momentum and position.
+\end{CRITIC}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Senior Research Scientific.
+**Objective**: Synthesize a primary research idea with expert criticism to produce a refined, groundbreaking, and technically feasible scientific objective.
+
+**Task**:
+You are in an iterative refinement loop (Iteration: 1). Your goal is to take the "Previous Idea," pass it through the filter of the "Critiques," and produce a "Hardened Idea" that is more scientifically rigorous and original than its predecessor.
+
+**Refinement Principles**:
+1. **Address Caveats**: If the critic mentioned a lack of feasibility, adjust the scope of the idea to fit the 'Data Description.'
+2. **Increase Specificity**: Move away from generic goals. Use the statistics and variables found in the data description to make the idea more concrete.
+3. **Internalize Feedback**: Do not explicitly mention the criticism or explain your changes. Instead, weave the solutions directly into the new version of the idea.
+4. **Maintain Grounding**: Ensure the "groundbreaking" aspect remains physically possible within the provided dataset's constraints.
+
+**Operational Constraints**:
+- **Brevity**: Keep the description concise but high-density (max 6 sentences).
+- **Format**: Do not include introductory text or meta-commentary about the process.
+- **Fidelity**: Stick strictly to the guidelines and physical realities described in the data description.
+- The idea must contain a title and a description of the idea
+
+**Input Data**:
+- **Data Description**: 
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+- **Previous Versions**: 
+
+
+Iteration 0:
+Idea: **Title: Universal Scaling Attractors in Anomalous Diffusion: A Comparative Propagator Analysis**
+
+This study establishes a unified effective theory by testing the convergence of disparate microscopic mechanisms—Pomeau-Manneville intermittency, CTRW, Lévy-Lorentz gas, and Sisyphus cooling—toward a common Lévy-stable attractor. For each mechanism, we will compute the empirical probability density function $P(x, t)$ and perform a scaling collapse onto the self-similar form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$, where $\mathcal{L}_\alpha$ is the Lévy-stable PDF. By systematically varying the control parameters (e.g., $z$ in PM maps, $\alpha$ in Lorentz gas, and $\gamma_0$ in Sisyphus cooling), we will quantify the "attraction strength" of each system toward the fractional Fokker-Planck limit. We will evaluate the fidelity of this convergence by measuring the deviation of the characteristic function $\phi(k, t)$ from the theoretical exponential decay $\exp(-D_\alpha |k|^\alpha t)$. This approach identifies which physical mechanisms possess the minimal parameter set required to replicate genuine Lévy-stable statistics, effectively mapping the universality classes of anomalous diffusion within the provided synthetic trajectory space.
+
+- **Critical Feedback**: *   **Data-Hypothesis Mismatch**: The proposed "scaling collapse" assumes a single self-similar attractor. However, the dataset includes mechanisms (e.g., PM maps, Sisyphus cooling) that are inherently non-stationary or possess finite-time correlations that deviate from the fractional Fokker-Planck (FFP) limit. You lack the temporal resolution (only 500-5000 steps) to distinguish between true asymptotic convergence and transient pre-asymptotic behavior.
+*   **Feasibility Gap**: Estimating the characteristic function $\phi(k, t)$ from only 200 trajectories is statistically ill-posed. The high-frequency components of the Fourier transform will be dominated by sampling noise, rendering the "deviation from exponential decay" metric unreliable for identifying universality classes.
+*   **Redundancy/Slop**: The "attraction strength" metric is ill-defined. Without a rigorous definition of the distance metric between the empirical PDF and the Lévy-stable PDF (e.g., Kullback-Leibler divergence or Wasserstein distance), this is qualitative hand-waving rather than a quantitative physical theory.
+*   **Strategic Pivot**: Abandon the "universal attractor" search. Instead, perform a **Finite-Time Scaling Analysis**. Map the effective Hurst exponent $H(t)$ and the tail index $\alpha(t)$ as a function of time. Use the 200 trajectories to calculate the *rate of convergence* to the Lévy-stable limit. This identifies which mechanisms are "fast" vs. "slow" to reach the FFP regime, providing a more robust classification than a binary "is it a Lévy flight" test.
+*   **Weak Link**: The assumption that all mechanisms converge to the same $\mathcal{L}_\alpha$ ignores the fundamental difference between *jump-based* (CTRW/Lorentz) and *velocity-based* (Sisyphus) mechanisms. The latter may never reach the FFP limit due to the coupling between momentum and position.
+
+Respond in the following format:
+
+\\begin{IDEA}
+<IDEA>
+\\end{IDEA}
+
+In <IDEA>, put the refined idea. 
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{IDEA}
+**Title: Finite-Time Convergence Dynamics of Anomalous Diffusion: A Comparative Divergence Study**
+
+This research quantifies the convergence rate of five distinct microscopic mechanisms toward the Fractional Fokker-Planck (FFP) limit by performing a time-resolved analysis of the anomalous diffusion exponent $H(t)$ and the tail index $\alpha(t)$. We will implement a sliding-window Wasserstein distance metric ($W_1$) to measure the divergence between the empirical probability distribution $P(x, t)$ of each mechanism and the reference distribution of the pure Lévy-stable process at corresponding scales. By tracking the evolution of the characteristic Hurst exponent $H(t) = \frac{1}{2} \frac{d \ln \langle x^2(t) \rangle}{d \ln t}$, we will categorize mechanisms into "fast-convergent" (e.g., Lévy-Lorentz gas) and "transient-dominant" (e.g., Sisyphus cooling) classes. This approach bypasses the ill-posed Fourier-space analysis by quantifying the structural evolution of the PDF tails directly, revealing whether the Sisyphus cooling mechanism remains trapped in a non-FFP regime due to momentum-position coupling. The final output will be a phase diagram plotting the rate of convergence $\dot{W}_1$ against the asymptotic tail index $\alpha$, providing a rigorous map of universality classes for finite-time anomalous transport.
+\end{IDEA}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Skeptical Red Team Reviewer and Scientific Auditor.
+**Objective**: Conduct a rigorous "Stress Test" on the proposed research idea to identify fatal flaws, feasibility gaps, and potential scientific "slop."
+
+**Evaluation Criteria**:
+1. **Data-Hypothesis Alignment**: Does the dataset described actually contain the variables and precision required to test this idea?
+2. **Feasibility & Noise**: Is the signal-to-noise ratio realistic? Is the idea too ambitious for the provided data?
+3. **Redundancy Check**: Does this idea simply repeat a "standard" analysis, or is it a meaningful contribution?
+4. **Physical Reality**: Does the idea violate any constraints or physical laws mentioned in the data description?
+
+**Task**:
+- Critically analyze the "Current Idea" against the "Data Description."
+- If the idea is **unfeasible**, explicitly state why and suggest a "Strategic Pivot" (a new direction that *is* supported by the data).
+- If the idea is **feasible but weak**, identify the specific "weak links" in the logic.
+- Compare it against "Previous Ideas" to ensure the refinement loop is moving forward, not backward.
+
+**Operational Constraints**:
+- **Tone**: Be professional, objective, and intellectually demanding. 
+- **Brevity**: Use high-density bullet points. Do not waste words on pleasantries.
+- **Strict Adherence**: Every criticism must be grounded in the provided 'Data Description.'
+
+**Input Data**:
+- **Data Description**: 
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+- **Current Idea**: **Title: Finite-Time Convergence Dynamics of Anomalous Diffusion: A Comparative Divergence Study**
+
+This research quantifies the convergence rate of five distinct microscopic mechanisms toward the Fractional Fokker-Planck (FFP) limit by performing a time-resolved analysis of the anomalous diffusion exponent $H(t)$ and the tail index $\alpha(t)$. We will implement a sliding-window Wasserstein distance metric ($W_1$) to measure the divergence between the empirical probability distribution $P(x, t)$ of each mechanism and the reference distribution of the pure Lévy-stable process at corresponding scales. By tracking the evolution of the characteristic Hurst exponent $H(t) = \frac{1}{2} \frac{d \ln \langle x^2(t) \rangle}{d \ln t}$, we will categorize mechanisms into "fast-convergent" (e.g., Lévy-Lorentz gas) and "transient-dominant" (e.g., Sisyphus cooling) classes. This approach bypasses the ill-posed Fourier-space analysis by quantifying the structural evolution of the PDF tails directly, revealing whether the Sisyphus cooling mechanism remains trapped in a non-FFP regime due to momentum-position coupling. The final output will be a phase diagram plotting the rate of convergence $\dot{W}_1$ against the asymptotic tail index $\alpha$, providing a rigorous map of universality classes for finite-time anomalous transport.
+- **Previous Versions (for context)**: 
+
+
+
+Iteration 0:
+Idea: **Title: Universal Scaling Attractors in Anomalous Diffusion: A Comparative Propagator Analysis**
+
+This study establishes a unified effective theory by testing the convergence of disparate microscopic mechanisms—Pomeau-Manneville intermittency, CTRW, Lévy-Lorentz gas, and Sisyphus cooling—toward a common Lévy-stable attractor. For each mechanism, we will compute the empirical probability density function $P(x, t)$ and perform a scaling collapse onto the self-similar form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$, where $\mathcal{L}_\alpha$ is the Lévy-stable PDF. By systematically varying the control parameters (e.g., $z$ in PM maps, $\alpha$ in Lorentz gas, and $\gamma_0$ in Sisyphus cooling), we will quantify the "attraction strength" of each system toward the fractional Fokker-Planck limit. We will evaluate the fidelity of this convergence by measuring the deviation of the characteristic function $\phi(k, t)$ from the theoretical exponential decay $\exp(-D_\alpha |k|^\alpha t)$. This approach identifies which physical mechanisms possess the minimal parameter set required to replicate genuine Lévy-stable statistics, effectively mapping the universality classes of anomalous diffusion within the provided synthetic trajectory space.
+
+
+Iteration 1:
+Idea: **Title: Finite-Time Convergence Dynamics of Anomalous Diffusion: A Comparative Divergence Study**
+
+This research quantifies the convergence rate of five distinct microscopic mechanisms toward the Fractional Fokker-Planck (FFP) limit by performing a time-resolved analysis of the anomalous diffusion exponent $H(t)$ and the tail index $\alpha(t)$. We will implement a sliding-window Wasserstein distance metric ($W_1$) to measure the divergence between the empirical probability distribution $P(x, t)$ of each mechanism and the reference distribution of the pure Lévy-stable process at corresponding scales. By tracking the evolution of the characteristic Hurst exponent $H(t) = \frac{1}{2} \frac{d \ln \langle x^2(t) \rangle}{d \ln t}$, we will categorize mechanisms into "fast-convergent" (e.g., Lévy-Lorentz gas) and "transient-dominant" (e.g., Sisyphus cooling) classes. This approach bypasses the ill-posed Fourier-space analysis by quantifying the structural evolution of the PDF tails directly, revealing whether the Sisyphus cooling mechanism remains trapped in a non-FFP regime due to momentum-position coupling. The final output will be a phase diagram plotting the rate of convergence $\dot{W}_1$ against the asymptotic tail index $\alpha$, providing a rigorous map of universality classes for finite-time anomalous transport.
+    
+
+Respond in the following format:
+
+\\begin{CRITIC}
+<CRITIC>
+\\end{CRITIC}
+
+In <CRITIC>, put your criticism to the idea. Try to be brief in the description.
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{CRITIC}
+*   **Data-Hypothesis Mismatch**: The $W_1$ (Wasserstein) distance is highly sensitive to the support of the distribution. Because the "Pure Lévy" reference and the physical mechanisms (e.g., Sisyphus cooling) operate on different physical scales and boundary conditions, $W_1$ will be dominated by scale-mismatch noise rather than structural convergence.
+*   **Feasibility Gap**: The Hurst exponent $H(t)$ is notoriously unstable for finite-time series (N=200 trajectories). Calculating a derivative $d \ln \langle x^2 \rangle / d \ln t$ on noisy, finite-length data will produce high-variance artifacts, rendering the "fast-convergent" vs. "transient-dominant" classification statistically insignificant.
+*   **Physical Reality**: The Sisyphus cooling mechanism is a momentum-dependent friction model. Its position distribution is not necessarily a Lévy-stable process; it is a Tsallis-distributed process. Forcing a $W_1$ comparison against a pure Lévy-stable reference is a category error—you are measuring the distance to a model that may not be the correct attractor.
+*   **Redundancy**: This is a refinement of Iteration 0, but it replaces a robust (though difficult) Fourier-space analysis with a metric ($W_1$) that is mathematically ill-suited for comparing processes with different underlying physical constraints.
+*   **Strategic Pivot**: Abandon the $W_1$ convergence rate. Instead, perform a **Rescaled Range (R/S) Analysis** or **Detrended Fluctuation Analysis (DFA)** to extract the scaling exponent $H$ across multiple time-scales. Use the **Kullback-Leibler (KL) Divergence** on the *normalized* PDFs (scaled by $t^{1/\alpha}$) to compare the shape of the tails against the Lévy-stable reference, rather than the absolute distance. This isolates the "Lévy-ness" of the mechanism from the scale-dependent drift.
+\end{CRITIC}
+
+
+###### PROMPT BEGINS ########
+Human: 
+**Role**: Senior Research Scientific.
+**Objective**: Synthesize a primary research idea with expert criticism to produce a refined, groundbreaking, and technically feasible scientific objective.
+
+**Task**:
+You are in an iterative refinement loop (Iteration: 2). Your goal is to take the "Previous Idea," pass it through the filter of the "Critiques," and produce a "Hardened Idea" that is more scientifically rigorous and original than its predecessor.
+
+**Refinement Principles**:
+1. **Address Caveats**: If the critic mentioned a lack of feasibility, adjust the scope of the idea to fit the 'Data Description.'
+2. **Increase Specificity**: Move away from generic goals. Use the statistics and variables found in the data description to make the idea more concrete.
+3. **Internalize Feedback**: Do not explicitly mention the criticism or explain your changes. Instead, weave the solutions directly into the new version of the idea.
+4. **Maintain Grounding**: Ensure the "groundbreaking" aspect remains physically possible within the provided dataset's constraints.
+
+**Operational Constraints**:
+- **Brevity**: Keep the description concise but high-density (max 6 sentences).
+- **Format**: Do not include introductory text or meta-commentary about the process.
+- **Fidelity**: Stick strictly to the guidelines and physical realities described in the data description.
+- The idea must contain a title and a description of the idea
+
+**Input Data**:
+- **Data Description**: 
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+- **Previous Versions**: 
+
+
+
+Iteration 0:
+Idea: **Title: Universal Scaling Attractors in Anomalous Diffusion: A Comparative Propagator Analysis**
+
+This study establishes a unified effective theory by testing the convergence of disparate microscopic mechanisms—Pomeau-Manneville intermittency, CTRW, Lévy-Lorentz gas, and Sisyphus cooling—toward a common Lévy-stable attractor. For each mechanism, we will compute the empirical probability density function $P(x, t)$ and perform a scaling collapse onto the self-similar form $P(x, t) = t^{-1/\alpha} \mathcal{L}_\alpha(x/t^{1/\alpha})$, where $\mathcal{L}_\alpha$ is the Lévy-stable PDF. By systematically varying the control parameters (e.g., $z$ in PM maps, $\alpha$ in Lorentz gas, and $\gamma_0$ in Sisyphus cooling), we will quantify the "attraction strength" of each system toward the fractional Fokker-Planck limit. We will evaluate the fidelity of this convergence by measuring the deviation of the characteristic function $\phi(k, t)$ from the theoretical exponential decay $\exp(-D_\alpha |k|^\alpha t)$. This approach identifies which physical mechanisms possess the minimal parameter set required to replicate genuine Lévy-stable statistics, effectively mapping the universality classes of anomalous diffusion within the provided synthetic trajectory space.
+
+
+Iteration 1:
+Idea: **Title: Finite-Time Convergence Dynamics of Anomalous Diffusion: A Comparative Divergence Study**
+
+This research quantifies the convergence rate of five distinct microscopic mechanisms toward the Fractional Fokker-Planck (FFP) limit by performing a time-resolved analysis of the anomalous diffusion exponent $H(t)$ and the tail index $\alpha(t)$. We will implement a sliding-window Wasserstein distance metric ($W_1$) to measure the divergence between the empirical probability distribution $P(x, t)$ of each mechanism and the reference distribution of the pure Lévy-stable process at corresponding scales. By tracking the evolution of the characteristic Hurst exponent $H(t) = \frac{1}{2} \frac{d \ln \langle x^2(t) \rangle}{d \ln t}$, we will categorize mechanisms into "fast-convergent" (e.g., Lévy-Lorentz gas) and "transient-dominant" (e.g., Sisyphus cooling) classes. This approach bypasses the ill-posed Fourier-space analysis by quantifying the structural evolution of the PDF tails directly, revealing whether the Sisyphus cooling mechanism remains trapped in a non-FFP regime due to momentum-position coupling. The final output will be a phase diagram plotting the rate of convergence $\dot{W}_1$ against the asymptotic tail index $\alpha$, providing a rigorous map of universality classes for finite-time anomalous transport.
+
+- **Critical Feedback**: *   **Data-Hypothesis Mismatch**: The $W_1$ (Wasserstein) distance is highly sensitive to the support of the distribution. Because the "Pure Lévy" reference and the physical mechanisms (e.g., Sisyphus cooling) operate on different physical scales and boundary conditions, $W_1$ will be dominated by scale-mismatch noise rather than structural convergence.
+*   **Feasibility Gap**: The Hurst exponent $H(t)$ is notoriously unstable for finite-time series (N=200 trajectories). Calculating a derivative $d \ln \langle x^2 \rangle / d \ln t$ on noisy, finite-length data will produce high-variance artifacts, rendering the "fast-convergent" vs. "transient-dominant" classification statistically insignificant.
+*   **Physical Reality**: The Sisyphus cooling mechanism is a momentum-dependent friction model. Its position distribution is not necessarily a Lévy-stable process; it is a Tsallis-distributed process. Forcing a $W_1$ comparison against a pure Lévy-stable reference is a category error—you are measuring the distance to a model that may not be the correct attractor.
+*   **Redundancy**: This is a refinement of Iteration 0, but it replaces a robust (though difficult) Fourier-space analysis with a metric ($W_1$) that is mathematically ill-suited for comparing processes with different underlying physical constraints.
+*   **Strategic Pivot**: Abandon the $W_1$ convergence rate. Instead, perform a **Rescaled Range (R/S) Analysis** or **Detrended Fluctuation Analysis (DFA)** to extract the scaling exponent $H$ across multiple time-scales. Use the **Kullback-Leibler (KL) Divergence** on the *normalized* PDFs (scaled by $t^{1/\alpha}$) to compare the shape of the tails against the Lévy-stable reference, rather than the absolute distance. This isolates the "Lévy-ness" of the mechanism from the scale-dependent drift.
+
+Respond in the following format:
+
+\\begin{IDEA}
+<IDEA>
+\\end{IDEA}
+
+In <IDEA>, put the refined idea. 
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{IDEA}
+**Title: Scaling Universality and Tail Fidelity in Anomalous Diffusion: A Multi-Scale Decomposition**
+
+This study identifies the minimal effective theory for anomalous diffusion by mapping five distinct physical mechanisms onto a unified scaling framework, isolating structural "Lévy-ness" from scale-dependent drift. We will utilize Detrended Fluctuation Analysis (DFA) to extract robust Hurst exponents $H$ for each mechanism, effectively mitigating the high-variance artifacts inherent in raw MSD calculations across the finite-length trajectories. To quantify convergence toward the fractional Fokker-Planck limit, we will normalize the empirical probability densities $P(x,t)$ by their respective time-dependent scaling factors $t^{1/\alpha}$ and compute the Kullback-Leibler (KL) divergence between these normalized distributions and the pure Lévy-stable reference. This approach isolates the shape of the distribution tails from the absolute scale, allowing for a rigorous comparison between the deterministic intermittency of Pomeau-Manneville maps and the momentum-dependent Tsallis statistics of Sisyphus cooling. By mapping the KL-divergence as a function of the tail index $\alpha$ and the DFA-derived scaling exponent $H$, we will delineate the universality classes of anomalous transport. This synthesis provides a statistically grounded criterion for determining which microscopic mechanisms are truly described by the half-Laplacian operator versus those requiring higher-order corrections or non-local effective dynamics.
+\end{IDEA}
+
