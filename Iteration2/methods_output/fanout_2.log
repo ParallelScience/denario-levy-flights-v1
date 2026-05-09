@@ -1,0 +1,181 @@
+
+###### PROMPT BEGINS ########
+Human: You are provided with:
+- a description of the data
+- an idea
+- research plan to carry out the idea.
+
+Your task is to provide suggestions on how to improve the plan.
+Take into account and potential feedback (if any).
+If the plan is already good enough, do not give suggestions to improve it. If this is not first iteration, you will also be provided with the previous research plan along with some feedback on it. If this is the case, take into account the feedback provided when designing the new research plan. It is good to have a detailed plan, but not to have an overly complicated plan. If you dont have suggestions, just say that you dont have further suggestions. The idea should remain the same. No need to add code to the research plan, as another agent will write code given the research plan.
+
+Data description:
+
+# Lévy Flights: Physical Mechanisms and Effective Theory
+
+## Scientific Goal
+
+Discover the minimal effective physical theory underlying anomalous diffusion / Lévy flights. Specifically: which microscopic or mesoscopic physical mechanisms produce genuine Lévy-stable statistics (governed by the fractional/half-Laplacian operator), how do their coarse-grained descriptions differ, and can a unified minimal model be identified?
+
+## Data Summary
+
+Synthetic trajectory datasets simulated from 5 distinct physical mechanisms, each representing a class of real physical systems. All files are NumPy arrays (.npy). 200 independent trajectories per dataset.
+
+---
+
+## File Inventory
+
+### 1. Pomeau-Manneville (PM) Intermittency Map
+Mechanism: Type-I intermittency. A deterministic 1D map x_{n+1} = (x_n + x_n^z) mod 1. Laminar episodes near x~0 produce algebraic waiting time distributions psi(t) ~ t^{-(1+alpha)} with alpha = 1/(z-1). This is a deterministic route to anomalous statistics.
+
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z1p5.npy`  — shape (200, 5001), z=1.5, expected alpha~2 (near-normal)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p0.npy`  — shape (200, 5001), z=2.0, expected alpha~1 (borderline Lévy)
+- `/home/node/work/projects/levy_flights_v1/data/pm_map_z2p5.npy`  — shape (200, 5001), z=2.5, expected alpha~0.67 (superdiffusive)
+
+Each row is a position trajectory X(t) = cumulative sum of map displacements. Time axis: integer steps 0..5000.
+
+### 2. Continuous-Time Random Walk (CTRW)
+Mechanism: Subordinated random walk. Jump lengths drawn from either Gaussian (mu=2) or Lévy-stable (mu=1.5) distributions; waiting times drawn from Pareto(alpha) distribution.
+
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_gaussian_jump.npy`  — shape (200, 500), alpha_wait=1.5, mu_jump=2.0 (normal diffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_gaussian_jump.npy` — shape (200, 500), alpha_wait=0.7, mu_jump=2.0 (subdiffusion)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_normal_wait_levy_jump.npy`      — shape (200, 500), alpha_wait=1.5, mu_jump=1.5 (superdiffusion via Lévy jumps)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_subdiff_wait_levy_jump.npy`     — shape (200, 500), alpha_wait=0.7, mu_jump=1.5 (both anomalous)
+- `/home/node/work/projects/levy_flights_v1/data/ctrw_tgrid.npy`                      — shape (500,), uniform time grid [0, 1000]
+
+### 3. Lévy-Lorentz Gas (1D)
+Mechanism: Ballistic transport in a 1D random medium. A particle moves at constant speed v=1 between scatterers whose spacings are drawn from a Pareto(alpha) distribution l ~ l^{-(1+alpha)}. Purely geometric origin: long corridors between rare scatterers produce power-law free paths. This is the cleanest mechanistic model.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha0p5.npy` — shape (200, 500), alpha=0.5 (very heavy tail)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p0.npy` — shape (200, 500), alpha=1.0
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha1p5.npy` — shape (200, 500), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_alpha2p0.npy` — shape (200, 500), alpha=2.0 (normal diffusion limit)
+- `/home/node/work/projects/levy_flights_v1/data/levy_lorentz_tgrid.npy`    — shape (500,), uniform time grid [0, 2000]
+
+### 4. Sisyphus Cooling Analogue
+Mechanism: Langevin dynamics with velocity-dependent (non-linear) friction, inspired by laser cooling of atoms. Friction: gamma(p) = gamma0 / (1 + (p/p0)^2). Weak friction at large momenta allows occasional large excursions; strong friction at small momenta creates trapping. The stationary momentum distribution is Tsallis/Lévy-like. Position: dx = p * dt.
+
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_strong_cooling.npy`   — shape (200, 5001), gamma0=5.0 (near-Gaussian)
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_moderate_cooling.npy` — shape (200, 5001), gamma0=1.0
+- `/home/node/work/projects/levy_flights_v1/data/sisyphus_weak_cooling.npy`     — shape (200, 5001), gamma0=0.2 (Lévy-like, heavy tails)
+All Sisyphus: p0=1.0, sigma=1.0, dt=0.1, steps=5000. Time axis: 0..500 in physical units.
+
+### 5. Pure Lévy Stable Process (Ground Truth Reference)
+Direct simulation of an alpha-stable symmetric Lévy process using the Chambers-Mallows-Stuck algorithm. This is the mathematical reference distribution — the "ideal" Lévy flight. Other mechanisms are compared against this.
+
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha0p5.npy` — shape (200, 5001), alpha=0.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p0.npy` — shape (200, 5001), alpha=1.0 (Cauchy)
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha1p5.npy` — shape (200, 5001), alpha=1.5
+- `/home/node/work/projects/levy_flights_v1/data/levy_stable_alpha2p0.npy` — shape (200, 5001), alpha=2.0 (Gaussian)
+Time axis: integer steps 0..5000.
+
+---
+
+## Key Variables and Units
+
+- All position arrays: dtype float32, rows = trajectories, columns = time steps
+- Position units: dimensionless (arbitrary length scale)
+- The "alpha" parameter in Lévy-stable distributions sets the tail: P(|x|>r) ~ r^{-alpha} for alpha in (0,2). alpha=2 is Gaussian; alpha<2 gives power-law tails.
+- Mean-squared displacement (MSD) scales as: <x^2(t)> ~ t^{2H} where H is the Hurst exponent. Normal diffusion: H=0.5. Superdiffusion: H>0.5.
+
+---
+
+## Metadata
+
+- `/home/node/work/projects/levy_flights_v1/data/metadata.json` — full parameter table
+
+---
+
+## Suggested Analyses
+
+1. *MSD scaling*: Compute <x^2(t)> for each mechanism and fit the anomalous diffusion exponent 2H. Compare across mechanisms and against pure Lévy stable reference.
+
+2. *Displacement distribution tails*: Fit the tail exponent alpha from the complementary CDF of step increments. Test if each mechanism converges to a stable distribution.
+
+3. *Fractional Fokker-Planck signature*: For each mechanism, estimate the propagator P(x,t) and test whether it satisfies the fractional diffusion equation partial_t P = -D_alpha (-partial_x^2)^{alpha/2} P by checking the characteristic function phi(k,t) = exp(-D_alpha |k|^alpha t).
+
+4. *Coarse-graining*: For the PM map and Lévy-Lorentz gas, test if averaging over many microscopic steps converges to the same Lévy-stable fixed point, and extract the effective alpha_eff and generalized diffusion coefficient D_alpha.
+
+5. *Effective Langevin description*: For Sisyphus cooling, fit an effective noise distribution and friction to see if the Langevin equation with alpha-stable noise reproduces the trajectory statistics.
+
+6. *Minimal model comparison*: Identify which mechanism(s) most closely reproduce Lévy-stable statistics with the fewest parameters, as a candidate for the minimal effective theory.
+
+
+Idea:
+**Title: Scaling Universality and Tail Fidelity in Anomalous Diffusion: A Multi-Scale Decomposition**
+
+This study identifies the minimal effective theory for anomalous diffusion by mapping five distinct physical mechanisms onto a unified scaling framework, isolating structural "Lévy-ness" from scale-dependent drift. We will utilize Detrended Fluctuation Analysis (DFA) to extract robust Hurst exponents $H$ for each mechanism, effectively mitigating the high-variance artifacts inherent in raw MSD calculations across the finite-length trajectories. To quantify convergence toward the fractional Fokker-Planck limit, we will normalize the empirical probability densities $P(x,t)$ by their respective time-dependent scaling factors $t^{1/\alpha}$ and compute the Kullback-Leibler (KL) divergence between these normalized distributions and the pure Lévy-stable reference. This approach isolates the shape of the distribution tails from the absolute scale, allowing for a rigorous comparison between the deterministic intermittency of Pomeau-Manneville maps and the momentum-dependent Tsallis statistics of Sisyphus cooling. By mapping the KL-divergence as a function of the tail index $\alpha$ and the DFA-derived scaling exponent $H$, we will delineate the universality classes of anomalous transport. This synthesis provides a statistically grounded criterion for determining which microscopic mechanisms are truly described by the half-Laplacian operator versus those requiring higher-order corrections or non-local effective dynamics.
+
+Research plan:
+1. **Finite-Size Scaling of PM Map Intermittency**: Perform a systematic analysis of the crossover time $\tau_c$ for the Pomeau-Manneville maps. For each $z \in \{1.5, 2.0, 2.5\}$, calculate the local scaling exponent $H(\tau)$ and identify the time $\tau_c$ where the system transitions from deterministic laminar behavior to the asymptotic Lévy-stable regime. Plot $\tau_c$ against the distance to the bifurcation point $(z - z_c)$ to determine the scaling law of the domain of validity, establishing the temporal bounds within which the FFP approximation is physically justified.
+
+2. **Information Complexity Analysis (Model Selection)**: Quantify the "minimal model" claim by comparing the Lévy-Lorentz gas and the CTRW. For each, compute the Akaike Information Criterion (AIC) and Bayesian Information Criterion (BIC) based on the log-likelihood of the empirical trajectory data relative to the pure Lévy-stable reference. Use the number of free parameters (1 for Lévy-Lorentz, 2 for CTRW) as the penalty term to determine which model provides the most parsimonious description of the observed anomalous diffusion.
+
+3. **State-Dependent FFP Mapping for Sisyphus Cooling**: Test the hypothesis that Sisyphus cooling can be reconciled with the FFP framework by fitting the trajectories to a generalized FFP equation with a spatially dependent diffusion coefficient $D(x) = D_0 |x|^{-\theta}$. Use a maximum likelihood estimation (MLE) approach to solve for the optimal $\theta$ and $D_0$ that minimize the KL-divergence between the empirical propagator $P(x,t)$ and the solution to the state-dependent fractional diffusion equation.
+
+4. **Effective Cutoff Length ($\ell_{eff}$) Extraction**: Analyze the empirical characteristic function $\phi(k, t)$ for all mechanisms. Identify the high-frequency regime where the empirical $\phi(k, t)$ deviates from the theoretical FFP form $\exp(-D_\alpha |k|^\alpha t)$. Calculate the effective cutoff length $\ell_{eff} \approx 1/k_{break}$, where $k_{break}$ is the wavenumber at which the deviation exceeds a defined threshold. Correlate $\ell_{eff}$ with the physical parameters of each system (e.g., mean free path in Lorentz gas, trapping length in Sisyphus) to provide a physical interpretation of the fractional operator's breakdown.
+
+5. **Unified Scaling Framework Construction**: Normalize all empirical probability densities $P(x, t)$ by the scaling factor $t^{1/\alpha}$ derived from the DFA Hurst exponent $H$. Compute the KL-divergence between these normalized densities and the pure Lévy-stable reference. Map these divergence values in a 2D parameter space defined by the tail index $\alpha$ and the scaling exponent $H$ to visualize the convergence of the five mechanisms toward the Lévy-stable fixed point.
+
+6. **Universality Class Delineation**: Synthesize the results from the model selection, state-dependent fitting, and scaling analysis to categorize the mechanisms. Define the universality classes based on whether the mechanism converges to the standard FFP (Lévy-Lorentz, CTRW), a modified FFP with state-dependent diffusion (Sisyphus), or a transiently valid FFP (PM maps).
+
+7. **Final Synthesis of the Minimal Effective Theory**: Integrate the findings to propose the minimal effective theory. Use the results from the AIC/BIC analysis and the success of the state-dependent FFP mapping to argue for the most efficient mathematical representation of anomalous diffusion, providing a quantitative basis for selecting the appropriate fractional operator for a given physical system.
+
+Previous research plan:
+1. **Data Preprocessing and Statistical Validation**: Standardize all trajectories to $x(0)=0$. For Pomeau-Manneville maps, discard the initial 500 steps to ensure steady-state intermittency. Verify that the anomalous scaling regime (identified via DFA) spans at least 20% of the total trajectory length to ensure statistical significance. If the regime is too short, flag the dataset as insufficient for effective theory classification.
+
+2. **Crossover Analysis (Ballistic to Anomalous)**: Calculate the local scaling exponent $H(\tau) = d(\log \sqrt{\langle x^2(\tau) \rangle}) / d(\log \tau)$ using a sliding window. Identify the crossover time $\tau_c$ where the system transitions from ballistic ($H \approx 1$) to anomalous diffusion ($H \approx 1/\alpha$). Use the persistence of the ballistic front at $x \approx \pm vt$ as a diagnostic to distinguish between Lévy walks and Lévy flights.
+
+3. **Core-Tail Decomposition and Non-Extensive Metrics**: Compute the empirical probability density $P(x, t)$. For Sisyphus cooling, quantify the deviation from the FFP propagator by calculating the Kurtosis and the Tsallis $q$-index of the central peak. This provides a formal metric for the "sharpness" of the trapping region, linking the microscopic friction to non-extensive statistical mechanics.
+
+4. **Lévy Walk vs. Lévy Flight Classification**: For the Lévy-Lorentz gas, explicitly detect the "ballistic peaks" in the propagator $P(x, t)$ at $x \approx \pm vt$. Quantify the amplitude of these peaks relative to the central Lévy-stable core. Use this ratio as the objective metric to classify the mechanism as GME-governed (Lévy walk) or FFP-governed (Lévy flight).
+
+5. **Effective Fractional Operator Derivation (Sisyphus Cooling)**: Estimate the local drift $A(p)$ and diffusion $B(p)$ using the parameters from `metadata.json` ($\gamma_0, p_0$). Project the resulting effective noise back into position space to determine if the effective fractional operator is spatially dependent. Correlate the derived fractional order $\alpha$ with the input physical parameters to close the loop between microscopic friction and the macroscopic operator.
+
+6. **Boundary Delineation in Fourier Space**: Compute the empirical characteristic function $\phi(k, t)$. Plot the ratio of $\phi(k, t)$ to the theoretical FFP characteristic function $\exp(-D_\alpha |k|^\alpha t)$. Focus the analysis on the high-frequency regime where $k > 1/L_{corr}$ (with $L_{corr}$ as the correlation length) to identify the specific scales where the FFP approximation fails.
+
+7. **Mechanism-to-Operator Mapping**: Construct a classification matrix assigning each mechanism to its effective theory:
+    - Velocity-constrained (Lévy-Lorentz) $\rightarrow$ Generalized Master Equation (GME).
+    - Friction-dominated (Sisyphus) $\rightarrow$ Fractional Langevin Equation.
+    - Jump-dominated (CTRW) $\rightarrow$ Fractional Fokker-Planck (FFP) Equation.
+
+8. **Synthesis of Minimal Effective Theory**: Integrate the findings to identify which mechanism most closely reproduces Lévy-stable statistics with the fewest parameters. Summarize the universality classes by mapping the KL-divergence (between normalized $P(x,t)$ and the Lévy-stable reference) against the DFA-derived $H$ and the tail index $\alpha$.
+
+Feedback on previous research plan:
+The current analysis is highly successful in distinguishing between "emergent" Lévy behavior and "input-driven" statistics. You have effectively identified the Lévy-Lorentz gas as the superior mechanistic model. However, to elevate this from a descriptive study to a robust scientific contribution, the following gaps must be addressed:
+
+1. **Address the PM Map "Failure":** You dismissed the Pomeau-Manneville (PM) maps as "fragile" due to deterministic artifacts. This is a missed opportunity. The PM map is a classic example of a system where the "Lévy-ness" is a consequence of the proximity to a tangent bifurcation. Instead of discarding them, perform a **finite-size scaling analysis** of the crossover time $\tau_c$ as a function of the map parameter $z$. If $\tau_c$ diverges as $z \to z_c$, you can rigorously define the "domain of validity" for the FFP approximation in deterministic systems. This would be a significant insight into why some physical systems appear Lévy-stable only over specific temporal windows.
+
+2. **Refine the "Minimal Model" Claim:** You argue the Lévy-Lorentz gas is the minimal *physical* theory. To make this claim bulletproof, you must address the **parameter sensitivity**. The CTRW is a 2-parameter model (waiting time, jump length), while the Lévy-Lorentz gas is a 1-parameter model (scatterer distribution). You should explicitly compare the "Information Complexity" (e.g., using the Akaike Information Criterion or similar) of the two models. If the Lévy-Lorentz gas achieves comparable fidelity with fewer free parameters, your claim of "minimal effective theory" becomes quantitatively defensible rather than just qualitative.
+
+3. **Sisyphus Cooling and Non-Extensivity:** Your finding that Sisyphus cooling belongs to a non-extensive universality class is excellent. However, you stop at identifying the deviation. To provide a truly "forward-looking" insight, test if the Sisyphus system can be mapped to a **Fractional Fokker-Planck equation with a state-dependent diffusion coefficient $D(x)$**. If the non-extensivity can be absorbed into a spatially varying diffusion term, you unify the Sisyphus mechanism with the FFP framework, rather than relegating it to a separate, disconnected class.
+
+4. **Fourier Space Interpretation:** Your Fourier analysis is technically sound but lacks a physical narrative. The divergence of $\phi(k,t)$ at high $k$ is expected for any system with a microscopic cutoff. Instead of just noting the failure, calculate the **effective cutoff length $\ell_{eff}$** from the $k$-space data. Does $\ell_{eff}$ scale with the mean free path of the Lorentz gas or the trapping length of the Sisyphus cooling? This would provide a physical interpretation of the "breakdown" of the fractional operator.
+
+**Actionable Recommendation for the next iteration:**
+Do not perform more simulations. Instead, perform a **model selection analysis** (e.g., AIC/BIC) comparing the Lévy-Lorentz gas and the CTRW against the pure Lévy reference. Then, attempt to fit the Sisyphus cooling data to a state-dependent FFP equation ($D(x) \propto |x|^{-\theta}$) to see if the "non-extensive" deviation can be reconciled with the fractional framework. This will provide the "unified minimal model" requested in the original goals.
+
+
+Respond in this format:
+
+\\begin{SUGGESTIONS}
+<SUGGESTIONS>
+\\end{SUGGESTIONS}
+
+In <SUGGESTIONS> put the suggestions to improve the plan.
+
+###### PROMPT ENDS ########
+
+###### RESPONSE [model: gemini-3.1-flash-lite-preview] ########
+\begin{SUGGESTIONS}
+The current research plan is well-structured and directly addresses the feedback provided. It effectively balances the need for rigorous statistical model selection (AIC/BIC) with the physical interpretation of the fractional operator's breakdown (cutoff length) and the unification of non-extensive systems (state-dependent FFP).
+
+I have only two minor suggestions to further strengthen the robustness of the analysis:
+
+1. **Normalization of the State-Dependent FFP (Step 3):** When fitting the state-dependent diffusion coefficient $D(x) = D_0 |x|^{-\theta}$, ensure that the optimization procedure accounts for the potential divergence of the propagator at the origin. Since Sisyphus cooling involves trapping at $x=0$, the fit should be performed using a weighted loss function or by excluding the immediate vicinity of the origin to avoid numerical instabilities that could bias the estimation of $\theta$.
+
+2. **Sensitivity of the Cutoff Length (Step 4):** Since the cutoff length $\ell_{eff}$ is derived from the empirical characteristic function, it is sensitive to the finite number of trajectories (200). I suggest adding a bootstrapping step to the calculation of $\ell_{eff}$ to provide confidence intervals. This will ensure that the correlation between $\ell_{eff}$ and the physical parameters (like the mean free path) is statistically significant and not an artifact of the finite sample size.
+
+The plan is otherwise excellent and ready for implementation.
+\end{SUGGESTIONS}
+
